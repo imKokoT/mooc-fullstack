@@ -3,59 +3,76 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 
-// passing params by props arg
-function Test(props) {
-  return (
-    <div>
-      <p color='blue'>Testing text from the Test component</p>
-      <p>{props.note}</p>
-    </div>
+function Header(props) {
+  return(
+    <h1>{props.value}</h1>
   )
 }
 
-// JSX looks so similar to Jinja but with its stranges
+function Part(props) {
+  return(
+    <li>
+      <p>{props.part} - {props.exercises}</p>
+    </li>
+  )
+}
+
+function Content(props) {
+  return(
+    <ul>
+      {props.parts.map(
+        // lol why do i must use key with <ul>, why is it not automated?
+        p => <Part key={p.part} part={p.part} exercises={p.exercises}/>
+      )}
+    </ul>
+  )
+}
+
+function Total(props) {
+  const parts = props.parts
+
+  const total = parts.reduce(             // reduce() is impressive!
+    (sum, part) => sum + part.exercises,  // (accumulator, currentValue, index, array) => expr
+    0                                     // init value
+  )
+
+  return(
+    <p>
+      Total number of exercises {total}
+    </p>
+  )
+}
+
+/* 
+  i wish there is no problem if use things not precented in the course
+  to complete the exercises, because i have some experience with other
+  languages and frameworks. so i want also to do some experiments if 
+  they don't took to much time or do things in more efficient way
+*/
 function App() {
-  const [count, setCount] = useState(0) // some magic here lets count updates
-  const testingList = [1,2,3,4,5]
+  const courseName = 'Half Stack application development' 
+  const parts = [
+    {
+      part: 'Fundamentals of React',
+      exercises: 10
+    },
+    {
+      part: 'Using props to pass data',
+      exercises: 7
+    },
+    {
+      part: 'State of a component',
+      exercises: 14
+    }
+  ]
 
-  const a = 10
-  const b = 20
-  
   return (
     <div>
-      <h1>Hello World</h1>
-
-      {/*
-        rendering of the object not valid, because React accepts base type only.
-        However, it's possible to render lists
-      */}
-      <p>{testingList}</p>
-
-      <hr />
-  
-      <p>
-        {a} + {b} = {a + b}
-      </p>
-      
-      <hr />
-
-      {/* We can define own components */}
-      <Test note='note 1' />
-      <Test note='note 2'/>
-      <Test note='note 3'/>
-
-      <hr />
-      {/* cool clicker from example app '-'d */}
-      <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+      <Header value={courseName}/>
+      <Content parts={parts} />
+      <Total parts={parts} />
     </div>
   )
 }
 
-// important stuff
 export default App
