@@ -43,34 +43,33 @@ function Total(props) {
   )
 }
 
-/* 
-  i wish there is no problem if use things not precented in the course
-  to complete the exercises, because i have some experience with other
-  languages and frameworks. so i want also to do some experiments if 
-  they don't took to much time or do things in more efficient way
-*/
+// i would prefer old syntax of a function definition
+// because this recent React version changed its style
+// back to older style
 function App() {
-  const courseName = 'Half Stack application development' 
-  const parts = [
-    {
-      part: 'Fundamentals of React',
-      exercises: 10
-    },
-    {
-      part: 'Using props to pass data',
-      exercises: 7
-    },
-    {
-      part: 'State of a component',
-      exercises: 14
-    }
-  ]
+  const course = {
+    name: 'Half Stack application development',
+    parts: [
+      {
+        part: 'Fundamentals of React',
+        exercises: 10
+      },
+      {
+        part: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        part: 'State of a component',
+        exercises: 14
+      }
+    ]
+  }
 
   return (
     <div>
-      <Header value={courseName}/>
-      <Content parts={parts} />
-      <Total parts={parts} />
+      <Header value={course.name}/>
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
