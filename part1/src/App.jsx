@@ -9,16 +9,19 @@ function Header({value}) {
   )
 }
 
-function StatisticLine({name, value}){
+function StatisticRow({name, value}){
   return (
-    <div>
-      {name}: {value}
-    </div>
+    <tr>
+      <td>{name}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
 function Statistics({good, neutral, bad}) {
   const total = good + neutral + bad
+  const average = (good-bad) / total
+  const positive = 100/total * good
 
   if (total == 0) {
     return (
@@ -33,14 +36,17 @@ function Statistics({good, neutral, bad}) {
     <div>
       <h2>Statistics</h2>
       
-      <ul>
-        <li><StatisticLine name='good' value={good}/></li>
-        <li><StatisticLine name='neutral' value={neutral}/></li>
-        <li><StatisticLine name='bad' value={bad}/></li>
-      </ul>
-        <StatisticLine name='Total' value={total} />
-        <StatisticLine name='Average' value={(good-bad) / total} />
-        <StatisticLine name='Positive' value={100/total * good + '%'} />
+      <table>
+        <tbody>
+          <StatisticRow name='good' value={good} />
+          <StatisticRow name='neutral' value={neutral} />
+          <StatisticRow name='bad' value={bad} />
+
+          <StatisticRow name='Total' value={total} />
+          <StatisticRow name='Average' value={average} />
+          <StatisticRow name='Positive' value={positive} />
+        </tbody>
+      </table>
     </div>
   )
 }
