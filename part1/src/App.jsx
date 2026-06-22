@@ -9,44 +9,10 @@ function Header({value}) {
   )
 }
 
-function StatisticRow({name, value}){
-  return (
-    <tr>
-      <td>{name}</td>
-      <td>{value}</td>
-    </tr>
-  )
-}
-
-function Statistics({good, neutral, bad}) {
-  const total = good + neutral + bad
-  const average = (good-bad) / total
-  const positive = 100/total * good
-
-  if (total == 0) {
-    return (
-      <div>
-        <h2>Statistics</h2>
-        <p>No feedback given</p>
-      </div>
-    )
-  }
-
+function StatisticLine({name, value}){
   return (
     <div>
-      <h2>Statistics</h2>
-      
-      <table>
-        <tbody>
-          <StatisticRow name='good' value={good} />
-          <StatisticRow name='neutral' value={neutral} />
-          <StatisticRow name='bad' value={bad} />
-
-          <StatisticRow name='Total' value={total} />
-          <StatisticRow name='Average' value={average} />
-          <StatisticRow name='Positive' value={positive} />
-        </tbody>
-      </table>
+      {name}: {value}
     </div>
   )
 }
@@ -59,29 +25,50 @@ function Button({text, onClick}) {
   )
 }
 
-// i would prefer old syntax of a function definition
-// because this recent React version changed its style
-// back to older style
 function App() {
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
+  const anecdotes = [
+    'If it hurts, do it more often.',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
+    'The only way to go fast, is to go well.'
+  ]
 
-  const handleGood = () => setGood(good+1)
-  const handleNeutral = () => setNeutral(neutral+1)
-  const handleBad = () => setBad(bad+1)
+  const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(
+    Array(anecdotes.length).fill(0)
+  )
+  
+  const rand = max => Math.floor(Math.random() * max)
+  
+  const handleSelected = () => setSelected(rand(anecdotes.length))
+  const handleVotes = () => {
+    var newVotes = [...votes]
+    newVotes[selected] += 1
+    setVotes(newVotes)
+  }
 
   return (
     <div>
-      <Header value='Give your feedback!'/>
+      <Header value='Anecdote of the day' />
+      
+      {anecdotes[selected]}
+      <StatisticLine name='Votes' value={votes[selected]}/>
 
       <div>
-        <Button text='good' onClick={handleGood} />
-        <Button text='neutral' onClick={handleNeutral} />
-        <Button text='bad' onClick={handleBad} />
+        <Button text='Vote Up' onClick={handleVotes} />
+        <Button text='Show Next' onClick={handleSelected} />
       </div>
 
-      <Statistics good={good} neutral={neutral} bad={bad} />
+      <Header value='Anecdote with most votes' />
+      {anecdotes[votes.indexOf(
+        Math.max(...votes)
+      )]}
+      <StatisticLine name='Has votes' value={Math.max(...votes)} />
+
     </div>
   )
 }
