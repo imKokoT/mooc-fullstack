@@ -3,43 +3,53 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 
-function Header(props) {
-  return(
-    <h1>{props.value}</h1>
+function Header({value}) {
+  return (
+    <h1>{value}</h1>
   )
 }
 
-function Part(props) {
-  return(
-    <li>
-      <p>{props.part} - {props.exercises}</p>
-    </li>
+function StatisticLine({name, value}){
+  return (
+    <div>
+      {name}: {value}
+    </div>
   )
 }
 
-function Content(props) {
-  return(
-    <ul>
-      {props.parts.map(
-        // lol why do i must use key with <ul>, why is it not automated?
-        p => <Part key={p.part} part={p.part} exercises={p.exercises}/>
-      )}
-    </ul>
+function Statistics({good, neutral, bad}) {
+  const total = good + neutral + bad
+
+  if (total == 0) {
+    return (
+      <div>
+        <h2>Statistics</h2>
+        <p>No feedback given</p>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <h2>Statistics</h2>
+      
+      <ul>
+        <li><StatisticLine name='good' value={good}/></li>
+        <li><StatisticLine name='neutral' value={neutral}/></li>
+        <li><StatisticLine name='bad' value={bad}/></li>
+      </ul>
+        <StatisticLine name='Total' value={total} />
+        <StatisticLine name='Average' value={(good-bad) / total} />
+        <StatisticLine name='Positive' value={100/total * good + '%'} />
+    </div>
   )
 }
 
-function Total(props) {
-  const parts = props.parts
-
-  const total = parts.reduce(             // reduce() is impressive!
-    (sum, part) => sum + part.exercises,  // (accumulator, currentValue, index, array) => expr
-    0                                     // init value
-  )
-
-  return(
-    <p>
-      Total number of exercises {total}
-    </p>
+function Button({text, onClick}) {
+  return (
+    <button onClick={onClick}>
+      {text}
+    </button>
   )
 }
 
@@ -47,29 +57,25 @@ function Total(props) {
 // because this recent React version changed its style
 // back to older style
 function App() {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        part: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        part: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        part: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  const handleGood = () => setGood(good+1)
+  const handleNeutral = () => setNeutral(neutral+1)
+  const handleBad = () => setBad(bad+1)
 
   return (
     <div>
-      <Header value={course.name}/>
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
+      <Header value='Give your feedback!'/>
+
+      <div>
+        <Button text='good' onClick={handleGood} />
+        <Button text='neutral' onClick={handleNeutral} />
+        <Button text='bad' onClick={handleBad} />
+      </div>
+
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
