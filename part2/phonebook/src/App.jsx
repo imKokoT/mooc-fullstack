@@ -4,16 +4,21 @@ function Note({person}) {
   return <li>{person.name}: {person.number}</li>
 }
 
-function App() {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
+function Filter({ searchName, setSearchName }) {
+  return (
+    <div>
+      search for people: <input
+        placeholder='John Due'
+        value={searchName}
+        onChange={e => setSearchName(e.target.value)}
+      />
+    </div>
+  )
+}
+
+function NewPersonForm({persons, setPersons}) {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [searchName, setSearchName] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -45,8 +50,36 @@ function App() {
     setNewName(event.target.value)
   const handleNumberChange = (event) =>
     setNewNumber(event.target.value)
-  const handleSearchNameChange = event =>
-    setSearchName(event.target.value)
+
+  return (
+    <form onSubmit={addPerson}>
+      <div>
+        name: <input placeholder='John Due' onChange={handleNameChange} value={newName}/> <br />
+        number: <input type='tel' placeholder='012-345-6789' pattern='[0-9\-]+' onChange={handleNumberChange} value={newNumber}/>
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+function Persons({persons}) {
+  return(
+    <ul>
+      {persons.map(p => <Note key={p.id} person={p}/>)}
+    </ul>
+  )
+}
+
+function App() {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+  ]) 
+  const [searchName, setSearchName] = useState('')
 
   const showList = searchName.length ? persons.filter(person => person.name
                                           .toLowerCase()
@@ -59,22 +92,13 @@ function App() {
   return (
     <div>
       <h1>Phonebook</h1>
-      search for people: <input placeholder='John Due' onChange={handleSearchNameChange} />
+      <Filter searchName={searchName} setSearchName={setSearchName} />
 
       <h2>Add person</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input placeholder='John Due' onChange={handleNameChange} value={newName}/> <br />
-          number: <input type='tel' placeholder='012-345-6789' pattern='[0-9\-]+' onChange={handleNumberChange} value={newNumber}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <NewPersonForm persons={persons} setPersons={setPersons}/>
+
       <h2>Numbers</h2>
-      <ul>
-        {showList.map(p => <Note key={p.id} person={p}/>)}
-      </ul>
+      <Persons persons={showList}/>
     </div>
   )
 }
