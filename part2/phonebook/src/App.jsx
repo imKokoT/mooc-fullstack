@@ -24,7 +24,7 @@ function RemovePersonButton({person}){
       .remove(person.id)
       .then(data => {
         setPersons(persons.filter(
-          p => p.id != data.id
+          p => p.id !== data.id
         ))
         console.log(`removed ${person.name}`)
       })
@@ -68,8 +68,28 @@ function NewPersonForm() {
     if (newName.length == 0 || newNumber.length == 0) 
       return
     if (persons.map(p => p.name).includes(newName)){
-      alert(`${newName} is already in the Phonebook!`)
-      return
+      if (!confirm(`${newName} is already in the Phonebook! Do you want to override old number?`))
+        return
+
+      // update number
+      const id = persons.find(p => p.name === newName).id
+      const newPerson = { name: newName, number: newNumber }
+
+      personService
+        .update(id, newPerson)
+        .then(person => {
+          console.log('updated', person.name)
+          setPersons(
+            persons.map(p => p.id === person.id ? {...newPerson, id: person.id} : p)
+          )
+
+          // cleanup
+          setNewName('')
+          setNewNumber('')
+        }).catch(error => {
+          console.error('failed to update', newName)
+        })
+        return
     }
     if (persons.map(p => p.number).includes(newNumber)){
       alert(`${newNumber} is already in the Phonebook!`)
