@@ -1,9 +1,21 @@
 import axios from 'axios'
-import { useState, useEffect } from 'react'
+import { 
+  useState,
+  useEffect,
+  // amazing stuff 
+  createContext,
+  useContext
+} from 'react'
 import personService from './services/person'
 
+// i found solution how to avoid annoying forwarding
+// within react's contexts! 
+const PersonsContext = createContext()
 
-function RemovePersonButton({setPersons, persons, person}){
+
+function RemovePersonButton({person}){
+  const { persons, setPersons } = useContext(PersonsContext)
+
   const removePerson = event => {
     if (!confirm(`Are you sure to remove ${person.name}?`))
       return
@@ -24,11 +36,11 @@ function RemovePersonButton({setPersons, persons, person}){
   return <button onClick={removePerson}>Remove</button>
 }
 
-function Note({person, persons, setPersons}) {
+function Note({person}) {
   return (
     <li>
         {person.name}: {person.number} 
-        <RemovePersonButton setPersons={setPersons} persons={persons} person={person} />
+        <RemovePersonButton person={person} />
     </li>
   )
 }
@@ -45,7 +57,8 @@ function Filter({ searchName, setSearchName }) {
   )
 }
 
-function NewPersonForm({persons, setPersons}) {
+function NewPersonForm() {
+  const { persons, setPersons } = useContext(PersonsContext)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -101,10 +114,10 @@ function NewPersonForm({persons, setPersons}) {
   )
 }
 
-function Persons({persons, setPersons}) {
+function Persons({persons}) {
   return(
     <ul>
-      {persons.map(p => <Note key={p.id} person={p} persons={persons} setPersons={setPersons}/>)}
+      {persons.map(p => <Note key={p.id} person={p}/>)}
     </ul>
   )
 }
@@ -148,14 +161,16 @@ function App() {
 
   return (
     <div>
-      <h1>Phonebook</h1>
-      <Filter searchName={searchName} setSearchName={setSearchName} />
+      <PersonsContext.Provider value={{ persons, setPersons }}>
+        <h1>Phonebook</h1>
+        <Filter searchName={searchName} setSearchName={setSearchName} />
 
-      <h2>Add person</h2>
-      <NewPersonForm persons={persons} setPersons={setPersons}/>
+        <h2>Add person</h2>
+        <NewPersonForm/>
 
-      <h2>Numbers</h2>
-      <Persons persons={showList} setPersons={setPersons}/>
+        <h2>Numbers</h2>
+        <Persons persons={showList}/>
+      </PersonsContext.Provider>
     </div>
   )
 }
