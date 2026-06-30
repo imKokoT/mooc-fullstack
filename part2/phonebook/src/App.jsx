@@ -3,8 +3,34 @@ import { useState, useEffect } from 'react'
 import personService from './services/person'
 
 
-function Note({person}) {
-  return <li>{person.name}: {person.number}</li>
+function RemovePersonButton({setPersons, persons, person}){
+  const removePerson = event => {
+    if (!confirm(`Are you sure to remove ${person.name}?`))
+      return
+
+    personService
+      .remove(person.id)
+      .then(data => {
+        setPersons(persons.filter(
+          p => p.id != data.id
+        ))
+        console.log(`removed ${person.name}`)
+      })
+      .catch(error => {
+        console.error('failed to remove', person)
+      })
+  }
+
+  return <button onClick={removePerson}>Remove</button>
+}
+
+function Note({person, persons, setPersons}) {
+  return (
+    <li>
+        {person.name}: {person.number} 
+        <RemovePersonButton setPersons={setPersons} persons={persons} person={person} />
+    </li>
+  )
 }
 
 function Filter({ searchName, setSearchName }) {
@@ -43,8 +69,8 @@ function NewPersonForm({persons, setPersons}) {
     }
 
     personService.add(person)
-    .then(response => {
-      setPersons(persons.concat(response.data))
+    .then(data => {
+      setPersons(persons.concat(data))
       console.log('added', newName)
 
       // cleanup
@@ -75,10 +101,10 @@ function NewPersonForm({persons, setPersons}) {
   )
 }
 
-function Persons({persons}) {
+function Persons({persons, setPersons}) {
   return(
     <ul>
-      {persons.map(p => <Note key={p.id} person={p}/>)}
+      {persons.map(p => <Note key={p.id} person={p} persons={persons} setPersons={setPersons}/>)}
     </ul>
   )
 }
@@ -110,10 +136,9 @@ function App() {
 
     personService
     .getAll()
-    .then(response => {{
-      setPersons(response.data)
-      console.debug('fetched', response.data.length, 'notes')
-    }
+    .then(data => {
+      setPersons(data)
+      console.debug('fetched', data.length, 'notes')
     })
     .catch(error => {
       console.error('failed fetch persons:', error)
@@ -130,7 +155,7 @@ function App() {
       <NewPersonForm persons={persons} setPersons={setPersons}/>
 
       <h2>Numbers</h2>
-      <Persons persons={showList}/>
+      <Persons persons={showList} setPersons={setPersons}/>
     </div>
   )
 }
