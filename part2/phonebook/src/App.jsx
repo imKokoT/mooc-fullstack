@@ -35,16 +35,25 @@ function NewPersonForm({persons, setPersons}) {
       return
     }
 
-    setPersons(persons.concat({
-      id: Math.max(...persons.map(p => p.id)) + 1, // this evil stuff should be handled by backend
+    const person = {
       name: newName,
       number: newNumber
-    }))
-    console.log('added', newName)
-    
-    // cleanup
-    setNewName('')
-    setNewNumber('')
+    }
+
+    axios
+    .post('http://localhost:3000/persons', person)
+    .then(response => {
+      setPersons(persons.concat(response.data))
+      console.log('added', newName)
+
+      // cleanup
+      setNewName('')
+      setNewNumber('')
+    })
+    .catch(error => {
+      console.error('failed add person:', error)
+      alert(`An error occurred while adding new person: ${error.code}`)
+    })
   }
 
   const handleNameChange = (event) => 
