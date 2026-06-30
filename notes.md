@@ -49,3 +49,11 @@ Now important to add entry to *package.json*:
 ```sh
 npm run db
 ```
+
+# AXIOS
+
+Modern way to setup async communication between client and server sides
+
+```sh
+npm install axios
+```
