@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import axios from 'axios'
+import { useState, useEffect } from 'react'
 
 function Note({person}) {
   return <li>{person.name}: {person.number}</li>
@@ -73,12 +74,7 @@ function Persons({persons}) {
 }
 
 function App() {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [searchName, setSearchName] = useState('')
 
   const showList = searchName.length ? persons.filter(person => person.name
@@ -88,6 +84,32 @@ function App() {
                                           )
                                        ) : 
                                        persons;
+
+  /* 
+  runs after first render; then rerender
+  
+  ---
+  since React .18 effects called twice while dev run because of strict mode
+    <StrictMode>
+      <App />
+    </StrictMode>
+  when run release it behaves as it expected
+  */
+  useEffect(() => {
+    console.debug('fetching persons')
+
+    axios
+    .get('http://localhost:3000/persons')
+    .then(response => {{
+      setPersons(response.data)
+      console.debug('fetched', response.data.length, 'notes')
+    }
+    })
+    .catch(error => {
+      console.error('failed fetch persons:', error)
+    })
+  },
+  [])
 
   return (
     <div>
