@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react'
+import personService from './services/person'
+
 
 function Note({person}) {
   return <li>{person.name}: {person.number}</li>
@@ -40,8 +42,7 @@ function NewPersonForm({persons, setPersons}) {
       number: newNumber
     }
 
-    axios
-    .post('http://localhost:3000/persons', person)
+    personService.add(person)
     .then(response => {
       setPersons(persons.concat(response.data))
       console.log('added', newName)
@@ -107,8 +108,8 @@ function App() {
   useEffect(() => {
     console.debug('fetching persons')
 
-    axios
-    .get('http://localhost:3000/persons')
+    personService
+    .getAll()
     .then(response => {{
       setPersons(response.data)
       console.debug('fetched', response.data.length, 'notes')
