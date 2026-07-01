@@ -65,6 +65,26 @@ function NewPersonForm() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
+  const updateNumber = (event) => {
+    const id = persons.find(p => p.name === newName).id
+    const newPerson = { name: newName, number: newNumber }
+
+    personService
+      .update(id, newPerson)
+      .then(person => {
+        console.log('updated', person.name)
+        setPersons(
+          persons.map(p => p.id === person.id ? {...newPerson, id: person.id} : p)
+        )
+
+        // cleanup
+        setNewName('')
+        setNewNumber('')
+      }).catch(error => {
+        console.error('failed to update', newName)
+      })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -75,24 +95,8 @@ function NewPersonForm() {
         return
 
       // update number
-      const id = persons.find(p => p.name === newName).id
-      const newPerson = { name: newName, number: newNumber }
-
-      personService
-        .update(id, newPerson)
-        .then(person => {
-          console.log('updated', person.name)
-          setPersons(
-            persons.map(p => p.id === person.id ? {...newPerson, id: person.id} : p)
-          )
-
-          // cleanup
-          setNewName('')
-          setNewNumber('')
-        }).catch(error => {
-          console.error('failed to update', newName)
-        })
-        return
+      updateNumber(event)
+      return
     }
     if (persons.map(p => p.number).includes(newNumber)){
       alert(`${newNumber} is already in the Phonebook!`)
@@ -185,7 +189,7 @@ function App() {
 
   return (
     <div>
-      <PersonsContext.Provider value={{ persons, setPersons }}>
+      <PersonsContext.Provider value={{ persons, setPersons, setNotification }}>
         <h1>Phonebook</h1>
         <Notification notification={newNotification}/>
         <Filter searchName={searchName} setSearchName={setSearchName} />
