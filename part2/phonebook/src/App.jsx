@@ -31,6 +31,10 @@ function RemovePersonButton({person}){
       })
       .catch(error => {
         console.error('failed to remove', person)
+        setNotification({
+          message:`Failed to remove ${person.name}: ${error.message}`, 
+          msgType:'error'
+        })
       })
   }
 
@@ -61,7 +65,7 @@ function Filter({ searchName, setSearchName }) {
 }
 
 function NewPersonForm() {
-  const { persons, setPersons } = useContext(PersonsContext)
+  const { persons, setPersons, setNotification } = useContext(PersonsContext)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -76,12 +80,20 @@ function NewPersonForm() {
         setPersons(
           persons.map(p => p.id === person.id ? {...newPerson, id: person.id} : p)
         )
+        setNotification({
+          message:`${newName}'s phone number was updated successfully!`, 
+          msgType:'success'
+        })
 
         // cleanup
         setNewName('')
         setNewNumber('')
       }).catch(error => {
         console.error('failed to update', newName)
+        setNotification({
+          message:`Failed to update number of ${newName}: ${error.message}`, 
+          msgType:'error'
+        })
       })
   }
 
@@ -99,7 +111,10 @@ function NewPersonForm() {
       return
     }
     if (persons.map(p => p.number).includes(newNumber)){
-      alert(`${newNumber} is already in the Phonebook!`)
+      setNotification({
+        message:`${newNumber} is already in the Phonebook!`, 
+        msgType:'error'
+      })
       return
     }
 
@@ -112,6 +127,10 @@ function NewPersonForm() {
     .then(data => {
       setPersons(persons.concat(data))
       console.log('added', newName)
+      setNotification({
+        message:`${newName} was added successfully!`, 
+        msgType:'success'
+      })
 
       // cleanup
       setNewName('')
@@ -119,7 +138,10 @@ function NewPersonForm() {
     })
     .catch(error => {
       console.error('failed add person:', error)
-      alert(`An error occurred while adding new person: ${error.code}`)
+      setNotification({
+        message:`An error occurred while adding new person: ${error.message}`, 
+        msgType:'error'
+      })
     })
   }
 
@@ -183,6 +205,10 @@ function App() {
     })
     .catch(error => {
       console.error('failed fetch persons:', error)
+      setNotification({
+        message:`An error occurred while fetch data from server: ${error.message}`, 
+        msgType:'error'
+      })
     })
   },
   [])

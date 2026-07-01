@@ -15,7 +15,7 @@ parent child {} - child inside parent
     background-color: rgb(244, 192, 124);
     padding-inline: 40px;
     padding-block: 15px;
-    margin-inline: -40%;
+    margin-inline: -20%;
     margin-bottom: 15px;
 
     font-size: large;
