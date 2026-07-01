@@ -33,14 +33,16 @@ function RemovePersonButton({person}){
       })
   }
 
-  return <button onClick={removePerson}>Remove</button>
+  return <button className='button' onClick={removePerson}>Remove</button>
 }
 
 function Note({person}) {
   return (
     <li>
+      <div className='note'>
         {person.name}: {person.number} 
         <RemovePersonButton person={person} />
+      </div>
     </li>
   )
 }
@@ -128,7 +130,7 @@ function NewPersonForm() {
         number: <input type='tel' placeholder='012-345-6789' pattern='[0-9\-]+' onChange={handleNumberChange} value={newNumber}/>
       </div>
       <div>
-        <button type="submit">add</button>
+        <button className='button' type="submit">add</button>
       </div>
     </form>
   )

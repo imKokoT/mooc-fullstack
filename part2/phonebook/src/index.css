@@ -1,0 +1,65 @@
+/*
+UNIT EXPLANATION
+
+ --< Font >--
+em - Relative to the font size of the parent.
+rem - Relative to the root (html) font size.
+ch - Width of the "0" character. Great for limiting text width.
+ex - Height of the lowercase "x".
+
+ --< Viewport units >--
+vw - 1% of viewport width.
+vh - 1% of viewport height.
+vmin - 1% of the smaller viewport dimension.
+vmax - 1% of the larger viewport dimension.
+
+ --< Absolute print units >--
+cm - Centimeters
+mm - Millimeters
+ih - Inches
+pt - Points. 1pt = 1/72 inch
+pc - Picas. 1pc = 12pt
+Q - Quarter-millimeters.
+
+ --< Grid >--
+fr - Fraction. column gets 1 fraction of the available width.
+
+*/
+
+/* type from # */
+#root {
+    display: flex;               /* Enable flexbox */
+    justify-content: center;     /* Center horizontally */
+    align-items: center;         /* Center vertically */
+    margin-inline: 20%;
+    
+    background-color: bisque;
+    border: 2px solid #6d6d6d;
+    border-radius: 50px;
+    padding: 20px;
+}
+
+h1 {
+    margin-left: 4%;
+    padding-bottom: 20px;
+    font-size: 46px;
+}
+
+h2 {
+    margin-left: 2.5%;
+    font-size: 24px;
+}
+
+/* class from . */
+.note {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 20px;
+
+    padding-bottom: 3px;
+}
+
+.button {
+    padding-inline: 20px;
+    font-size: 14px;
+}
