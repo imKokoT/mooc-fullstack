@@ -6,6 +6,7 @@ import {
   createContext,
   useContext
 } from 'react'
+import Notification from './components/notification'
 import personService from './services/person'
 
 // i found solution how to avoid annoying forwarding
@@ -147,6 +148,7 @@ function Persons({persons}) {
 function App() {
   const [persons, setPersons] = useState([]) 
   const [searchName, setSearchName] = useState('')
+  const [newNotification, setNotification] = useState(null) // or {message, msgType}
 
   const showList = searchName.length ? persons.filter(person => person.name
                                           .toLowerCase()
@@ -185,6 +187,7 @@ function App() {
     <div>
       <PersonsContext.Provider value={{ persons, setPersons }}>
         <h1>Phonebook</h1>
+        <Notification notification={newNotification}/>
         <Filter searchName={searchName} setSearchName={setSearchName} />
 
         <h2>Add person</h2>
