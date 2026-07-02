@@ -28,10 +28,16 @@ function CountryDetails({country}) {
   )
 }
 
-function CountryElement({country}) {
+function CountryElement({country, setCountries}) {
+  const [show, setShow] = useState(null)
+
+  const showDetails = event => {
+    setCountries([country])
+  }
+
   return (
     <li>
-      {country.name.common} <button>Show details</button>
+      {country.name.common} <button onClick={showDetails}>Show details</button>
     </li>
   )
 }
@@ -51,7 +57,7 @@ function Results({query}) {
     .catch(error => {
       console.error(`failed to fetch countries`)
     })
-  }, [])
+  }, [query])
   
   if (!query)
     return <div>...</div>
@@ -79,7 +85,7 @@ function Results({query}) {
     return (
       <div>
         <ul>
-          {results.map(c => <CountryElement key={c.name.common} country={c}/>)}
+          {results.map(c => <CountryElement key={c.name.common} country={c} setCountries={setCountries}/>)}
         </ul>
       </div>
     )
