@@ -28,11 +28,11 @@ function CountryDetails({country}) {
   )
 }
 
-function CountryElement({country, setCountries}) {
+function CountryElement({country, setFiltered}) {
   const [show, setShow] = useState(null)
 
   const showDetails = event => {
-    setCountries([country])
+    setFiltered([country])
   }
 
   return (
@@ -42,58 +42,50 @@ function CountryElement({country, setCountries}) {
   )
 }
 
-function Results({query}) {
-  const [countries, setCountries] = useState(null)
+function Results({query, countries}) {
+  const [filtered, setFiltered] = useState(null)
   
   useEffect(() => {
-    console.log('fetching countries')
-    
-    CountriesService
-    .getAll()
-    .then(data => {
-      setCountries(data)
-      console.log(`fetched ${data.length} countries in total`)
-    })
-    .catch(error => {
-      console.error(`failed to fetch countries`)
-    })
+    if (!countries)
+      return
+
+    // simple and effective search, works even with countries
+    // like Sudan and South Sudan. maybe i had to implement
+    // search within regex patterns but i think it's not required
+    // for this small search set of 250 countries.
+    setFiltered(
+      countries.filter(c => c.name.common
+        .toLowerCase()
+        .startsWith(
+          query.toLowerCase()
+        )
+    )
+  )
   }, [query])
   
   if (!query)
     return <div>...</div>
 
-  if (!countries)
-    return <div>An error occurred while fetch data about countries</div>
-
-  // simple and effective search, works even with countries
-  // like Sudan and South Sudan. maybe i had to implement
-  // search within regex patterns but i think it's not required
-  // for this small search set of 250 countries.
-  const results = countries.filter(
-    c => c.name.common
-      .toLowerCase()
-      .startsWith(
-        query.toLowerCase()
-      )
-  )
+  if (!filtered)
+    return
 
   // to many
-  if (results.length > MAX_RESULTS)
+  if (filtered.length > MAX_RESULTS)
     return <div>Too many results</div>
   // up to MAX_RESULTS results
-  else if (results.length > 1)
+  else if (filtered.length > 1)
     return (
       <div>
         <ul>
-          {results.map(c => <CountryElement key={c.name.common} country={c} setCountries={setCountries}/>)}
+          {filtered.map(c => <CountryElement key={c.name.common} country={c} setFiltered={setFiltered}/>)}
         </ul>
       </div>
     )
   // single
-  else if (results.length === 1)
+  else if (filtered.length === 1)
     return (
       <div>
-        <CountryDetails country={results[0]}/>
+        <CountryDetails country={filtered[0]}/>
       </div>
     )
   // no results
@@ -103,6 +95,24 @@ function Results({query}) {
 
 function App() {
   const [searchQuery, setSearch] = useState('')
+  const [countries, setCountries] = useState(null)
+
+  useEffect(() => {
+    console.log('fetching countries')
+
+    CountriesService
+      .getAll()
+      .then(data => {
+        setCountries(data)
+        console.log(`fetched ${data.length} countries in total`)
+      })
+      .catch(error => {
+        console.error(`failed to fetch countries`)
+      })
+  }, [])
+
+  if (!countries)
+    return <div>An error occurred while fetch data about countries</div>
 
   const handleSearchChange = event =>
     setSearch(event.target.value)
@@ -114,7 +124,7 @@ function App() {
         <input type="text" placeholder='search for country' value={searchQuery} onChange={handleSearchChange} />
       </div>
 
-      <Results query={searchQuery} />
+      <Results query={searchQuery} countries={countries} />
     </div>
   )
 }
