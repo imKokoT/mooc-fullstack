@@ -4,6 +4,16 @@ import {
 } from 'react'
 import CountriesService from './service/access_countries'
 
+const MAX_RESULTS = 10
+
+
+function CountryElement({country}){
+  return (
+    <li>
+      {country.name.common} <button>Show details</button>
+    </li>
+  )
+}
 
 function Results({query}) {
   const [countries, setCountries] = useState(null)
@@ -23,20 +33,41 @@ function Results({query}) {
   }, [])
   
   if (!query)
-    return
+    return <div>...</div>
 
   if (!countries)
+    return <div>An error occurred while fetch data about countries</div>
+
+  const results = countries.filter(
+    c => c.name.common
+      .toLowerCase()
+      .startsWith(
+        query.toLowerCase()
+      )
+  )
+
+  // to many
+  if (results.length > MAX_RESULTS)
+    return <div>Too many results</div>
+  // up to MAX_RESULTS results
+  else if (results.length > 1)
     return (
       <div>
-        An error occurred while fetch data about countries 
+        <ul>
+          {results.map(c => <CountryElement country={c}/>)}
+        </ul>
       </div>
     )
-
-  return (
-    <div>
-      test
-    </div>
-  )
+  // single
+  else if (results.length === 1)
+    return (
+      <div>
+        Country details...
+      </div>
+    )
+  // no results
+  else
+    return <div>No search results...</div>
 }
 
 function App() {
