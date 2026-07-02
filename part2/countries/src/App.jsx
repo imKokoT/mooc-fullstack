@@ -3,11 +3,46 @@ import {
   useEffect
 } from 'react'
 import CountriesService from './service/access_countries'
+import WeatherService from './service/access_open_weather'
 
 const MAX_RESULTS = 10
 
 
 function CountryDetails({country}) {
+  const [weather, setWeather] = useState(null)
+
+  useEffect(() => {
+    console.log(`fetching weather of ${country.capital}...`)
+
+    WeatherService.
+      fetch(country.capital)
+      .then(weather => {
+        setWeather(weather)
+        console.log(weather)
+      })
+      .catch(error => {
+        console.error('failed to fetch weather')
+        setWeather({})
+      })
+  }, [])
+  
+  if (!weather) 
+    return
+
+  const {temp, wind, icon} = WeatherService.getWeather(weather)
+
+  let weatherInfo = <p>No information...</p>
+  if (Object.keys(weather).length !== 0)
+    weatherInfo = (
+      <p>
+        Temperature: {temp} Celsius
+        <br />
+        Wind: {wind} m/s at {weather.wind.deg} degrees
+        <br />
+        <img src={icon}/>
+      </p>
+    )
+
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -24,6 +59,9 @@ function CountryDetails({country}) {
       <ol>
         {Object.values(country.languages).map(v => <li key={v}>{v}</li>)}
       </ol>
+
+      <h3>Weather in the capital</h3>
+      {weatherInfo}
     </div>
   )
 }
