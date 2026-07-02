@@ -7,7 +7,28 @@ import CountriesService from './service/access_countries'
 const MAX_RESULTS = 10
 
 
-function CountryElement({country}){
+function CountryDetails({country}) {
+  return (
+    <div>
+      <h2>{country.name.common}</h2>
+
+      <h3>Base information</h3>
+      <p>
+        Capital: {country.capital}
+        <br />
+        Area: {country.area}
+      </p>
+      <img src={country.flags.svg} alt={country.flag} />
+
+      <h3>Languages</h3>
+      <ol>
+        {Object.values(country.languages).map(v => <li key={v}>{v}</li>)}
+      </ol>
+    </div>
+  )
+}
+
+function CountryElement({country}) {
   return (
     <li>
       {country.name.common} <button>Show details</button>
@@ -38,6 +59,10 @@ function Results({query}) {
   if (!countries)
     return <div>An error occurred while fetch data about countries</div>
 
+  // simple and effective search, works even with countries
+  // like Sudan and South Sudan. maybe i had to implement
+  // search within regex patterns but i think it's not required
+  // for this small search set of 250 countries.
   const results = countries.filter(
     c => c.name.common
       .toLowerCase()
@@ -54,7 +79,7 @@ function Results({query}) {
     return (
       <div>
         <ul>
-          {results.map(c => <CountryElement country={c}/>)}
+          {results.map(c => <CountryElement key={c.name.common} country={c}/>)}
         </ul>
       </div>
     )
@@ -62,7 +87,7 @@ function Results({query}) {
   else if (results.length === 1)
     return (
       <div>
-        Country details...
+        <CountryDetails country={results[0]}/>
       </div>
     )
   // no results
