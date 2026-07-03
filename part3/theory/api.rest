@@ -1,0 +1,23 @@
+
+@baseUrl = http://localhost:3001
+
+
+GET {{baseUrl}}
+
+###
+
+GET {{baseUrl}}/api/notes
+
+###
+# @prompt id
+DELETE  {{baseUrl}}/api/notes/{{id}}
+
+###
+# @prompt text
+POST {{baseUrl}}/api/notes
+Content-Type: application/json
+
+{
+    "content": "{{text}}",
+    "important": false
+}
