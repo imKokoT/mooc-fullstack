@@ -21,7 +21,7 @@ nmp install
 nmp i
 ```
 
-Run package / project:
+Run script from package.json:
 
 ```sh
 nmp run [entry name]
@@ -52,8 +52,38 @@ npm run db
 
 # AXIOS
 
-Modern way to setup async communication between client and server sides
+Modern way to setup async communication browser to server
 
 ```sh
 npm install axios
+```
+
+# EXPRESS
+
+One of popular libraries to implement backend
+
+```sh
+npm i express
+```
+
+# Automatic Change Tracking
+
+You can make the server track our changes by starting it with the --watch option:
+
+```sh
+node --watch index.js
+```
+
+or even better:
+
+```json
+{
+  // ..
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",    
+"test": "echo \"Error: no test specified\" && exit 1"
+  },
+  // ..
+}
 ```
