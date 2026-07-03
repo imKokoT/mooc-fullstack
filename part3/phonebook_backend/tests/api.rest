@@ -1,0 +1,4 @@
+
+@baseUrl = http://localhost:3001/api
+
+GET {{baseUrl}}/persons HTTP/1.1
