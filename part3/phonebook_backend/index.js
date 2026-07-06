@@ -1,7 +1,9 @@
 const app = require('./app.js')
+// middleware
+require('./middleware/morgan')
 // routes
 require('./routes/persons')
-require('./routes/info.js')
+require('./routes/info')
 
 // settings
 const PORT = 3001
