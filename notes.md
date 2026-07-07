@@ -104,18 +104,20 @@ HTTP status codes are grouped by their first digit:
 - 101	Switching Protocols (e.g. WebSockets)
 - 102	Processing
 
+> **no body in response**
+
 ## 2xx
 
 - 200 OK/Success
 - 201 Created; A new resource was created.
 - 202 Accepted; The request was accepted but will be processed later
-- 204 No Content; common for DELETE
+- 204 No Content; common for DELETE; **no body in response**
 
 ## 3xx
 
 - 301 Moved Permanently; Permanent redirect.
 - 302 Found; Temporary redirect.
-- 304 Not Modified; Browser uses its cached copy.
+- 304 Not Modified; Browser uses its cached copy; **no body in response**
 
 ## 4xx
 - 400 Bad Request; invalid data
@@ -168,3 +170,11 @@ However, certain resources are considered safe to embed:
 - videos
 - fonts (sometimes with restrictions)
 - scripts
+
+# BUILD VITE PROJECT
+
+```sh 
+npm run build
+```
+
+*dist* folder is a product

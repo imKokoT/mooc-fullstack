@@ -15,7 +15,7 @@ const PersonsContext = createContext()
 
 
 function RemovePersonButton({person}){
-  const { persons, setPersons } = useContext(PersonsContext)
+  const { persons, setPersons, setNotification } = useContext(PersonsContext)
 
   const removePerson = event => {
     if (!confirm(`Are you sure to remove ${person.name}?`))
@@ -23,10 +23,15 @@ function RemovePersonButton({person}){
 
     personService
       .remove(person.id)
-      .then(data => {
+      .then(() => {
         setPersons(persons.filter(
-          p => p.id !== data.id
+          p => p.id !== person.id
         ))
+
+        setNotification({
+          message:`${person.name} was removed successfully!`, 
+          msgType:'success'
+        })
         console.log(`removed ${person.name}`)
       })
       .catch(error => {

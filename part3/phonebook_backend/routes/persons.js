@@ -1,5 +1,3 @@
-const { request } = require('../app.js')
-const { response } = require('../app.js')
 const app = require('../app.js')
 const { persons } = require('../data.js')
 
@@ -26,8 +24,8 @@ app.delete(`${routeUrl}/:id`, (request, response) =>{
     if (person === -1) 
         return response.status(404)
 
-    persons.splice(person, 1)
-    response.status(204).end()
+    const removed = persons.splice(person, 1)[0]
+    response.status(204).end() // lol, 204 does not have body, only 200 could, so lets update frontend
     console.log('DELETE PERSON ID', id)
 })
 
@@ -50,5 +48,5 @@ app.post(routeUrl, (request, response) => {
 
     persons.push(newPerson)
     console.log('ADDED PERSON', newPerson)
-    response.status(201).end()
+    response.status(201).json(newPerson)
 })
