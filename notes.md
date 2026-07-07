@@ -117,7 +117,7 @@ HTTP status codes are grouped by their first digit:
 - 302 Found; Temporary redirect.
 - 304 Not Modified; Browser uses its cached copy.
 
-# 4xx
+## 4xx
 - 400 Bad Request; invalid data
 - 401 Unauthorized
 - 403 Forbidden; Logged in, but not allowed.
@@ -129,10 +129,42 @@ HTTP status codes are grouped by their first digit:
 - 422 Unprocessable Content; JSON valid but data in it not
 - 429 Too Many Requests
 
-# 5xx
+## 5xx
 
 - 500 Internal Server Error
 - 501 Not Implemented
 - 502 Bad Gateway
 - 503 Service Unavailable
 - 504 Gateway Timeout 
+
+# Same origin policy and CORS
+
+The issue lies with a thing called same origin policy. A URL's origin is defined by the combination of protocol (AKA scheme), hostname, and port.
+
+When you visit a website (e.g. http://example.com), the browser issues a request to the server on which the website (example.com) is hosted. The response sent by the server is an HTML file that may contain one or more references to external assets/resources hosted either on the same server that example.com is hosted on or a different website. When the browser sees reference(s) to a URL in the source HTML, it issues a request. If the request is issued using the URL that the source HTML was fetched from, then the browser processes the response without any issues. However, if the resource is fetched using a URL that doesn't share the same origin(scheme, host, port) as the source HTML, the browser will have to check the Access-Control-Allow-origin response header. If it contains * on the URL of the source HTML, the browser will process the response, otherwise the browser will refuse to process it and throws an error.
+
+The same-origin policy is a security mechanism implemented by browsers in order to prevent session hijacking among other security vulnerabilities.
+
+In order to enable legitimate cross-origin requests (requests to URLs that don't share the same origin) W3C came up with a mechanism called CORS(Cross-Origin Resource Sharing)
+
+In your backend repository, install cors with the command:
+
+```sh
+npm install cors
+```
+
+take the middleware to use and allow for requests from all origins:
+
+```sh
+const cors = require('cors')
+
+app.use(cors())
+```
+
+However, certain resources are considered safe to embed:
+
+- images
+- CSS
+- videos
+- fonts (sometimes with restrictions)
+- scripts
