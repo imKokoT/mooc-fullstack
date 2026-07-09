@@ -14,11 +14,13 @@ const PersonSchema = mongoose.Schema({
     // typing hints
     name: {
       type: String,
-      unique: true
+      unique: true,
+      required: true
     },
     number: {
       type: String,
-      unique: true
+      unique: true,
+      required: true
     }
 })
 PersonSchema.set('toJSON', { // reformat ORM model's schema

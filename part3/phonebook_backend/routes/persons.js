@@ -41,14 +41,7 @@ app.delete(`${routeUrl}/:id`, (req, res, next) => {
 
 app.put(`${routeUrl}/:id`, (req, res, next) => {
     const id = req.params.id
-
     const newPerson = req.body
-
-    if (!newPerson)
-        return res.status(400).end()
-
-    if (!newPerson.name || !newPerson.number)
-        return res.status(422).end()
     
     Person.findById(id)
         .then(person => {
@@ -66,14 +59,8 @@ app.put(`${routeUrl}/:id`, (req, res, next) => {
         )
 })
 
-app.post(routeUrl, (req, res) => {
+app.post(routeUrl, (req, res, next) => {
     const person = req.body
-
-    if (!person)
-        return res.status(400).end()
-
-    if (!person.name || !person.number)
-        return res.status(422).end()
     
     const newPerson = new Person({
         name: person.name,
@@ -84,10 +71,6 @@ app.post(routeUrl, (req, res) => {
         console.log('ADDED PERSON', newPerson.id)
         res.status(201).json(newPerson)
     }).catch(error => {
-        if (error.code === 11000) 
-            return res.status(409).send('duplicate values was detected')
-        
-        console.error(error)
-        res.status(500).end()
+        next(error)
     })
 })
