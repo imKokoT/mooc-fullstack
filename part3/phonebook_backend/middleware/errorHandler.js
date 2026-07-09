@@ -11,7 +11,7 @@ const errorHandler = (error, req, res, next) => {
             return res.status(400).send({ error: 'malformed id' })
         case 'ValidationError':
             if (error.code === 11000) 
-                return res.status(409).send('duplicate values was detected')
+                return res.status(409).send({error: 'duplicate values was detected'})
 
             res.status(400).json({
                 error: error.message
