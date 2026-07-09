@@ -10,7 +10,7 @@ app.get(routeUrl, (request, response) => {
     )
 })
 
-app.get(`${routeUrl}/:id`, (request, response) => {
+app.get(`${routeUrl}/:id`, (request, response, next) => {
     const id = request.params.id
 
     Person.findById(id)
@@ -19,12 +19,12 @@ app.get(`${routeUrl}/:id`, (request, response) => {
                 response.json(person)
             else
                 response.status(404).end()
-        }).catch(error => {
-            response.status(400).send('bad id')
-        })
+        }).catch(error => 
+            next(error)
+        )
 })
 
-app.delete(`${routeUrl}/:id`, (request, response) =>{
+app.delete(`${routeUrl}/:id`, (request, response, next) =>{
     const id = request.params.id
     
     Person.findByIdAndDelete(id)
@@ -34,9 +34,9 @@ app.delete(`${routeUrl}/:id`, (request, response) =>{
 
             console.log('DELETE PERSON ID', id)
             response.status(204).end()
-        }).catch(error => {
-            response.status(400).send('bad id')
-        })
+        }).catch(error =>
+            next(error)
+        )
 })
 
 app.post(routeUrl, (request, response) => {
