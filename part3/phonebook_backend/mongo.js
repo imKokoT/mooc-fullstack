@@ -15,12 +15,15 @@ const PersonSchema = mongoose.Schema({
     name: {
       type: String,
       unique: true,
-      required: true
+      required: true,
+      minLength: 3,
+      trim: true
     },
     number: {
       type: String,
       unique: true,
-      required: true
+      required: true,
+      match: [/^[0-9-]+$/, 'Invalid phone number format']
     }
 })
 PersonSchema.set('toJSON', { // reformat ORM model's schema
