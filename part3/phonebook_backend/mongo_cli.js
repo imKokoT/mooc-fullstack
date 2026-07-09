@@ -1,3 +1,4 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 const { Person } = require('./mongo')
 
@@ -16,14 +17,14 @@ function showAll() {
 }
 
 function newPerson() {
-    if (argv.length !== 5) {
+    if (argv.length !== 4) {
         console.log('2 additional arguments are required (name, number)')
         process.exit(1)
     }
 
     const person = new Person({
-        name: argv[3],
-        number: argv[4]
+        name: argv[2],
+        number: argv[3]
     })
 
     person.save().then(result => {
@@ -33,7 +34,7 @@ function newPerson() {
 }
 
 // entry
-if (argv.length === 3)
+if (argv.length === 2)
     showAll()
 else
     newPerson()
