@@ -9,8 +9,17 @@ mongoose.connect(url, { family: 4 })
 
 // models
 const PersonSchema = mongoose.Schema({
-    name: String,
-    number: String
+    // easier make unique than do custom checks.
+    // and i like mongoose orm but i miss static
+    // typing hints
+    name: {
+      type: String,
+      unique: true
+    },
+    number: {
+      type: String,
+      unique: true
+    }
 })
 PersonSchema.set('toJSON', { // reformat ORM model's schema
   transform: (document, returnedObject) => {
