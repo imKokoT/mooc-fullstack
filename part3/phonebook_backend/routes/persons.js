@@ -67,7 +67,7 @@ app.post(routeUrl, (req, res, next) => {
         number: person.number
     })
     
-    newPerson.save().then(result => {
+    newPerson.save().then(() => {
         console.log('ADDED PERSON', newPerson.id)
         res.status(201).json(newPerson)
     }).catch(error => {
