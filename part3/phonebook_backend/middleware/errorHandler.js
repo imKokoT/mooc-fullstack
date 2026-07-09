@@ -1,18 +1,22 @@
 const app = require('../app')
 
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, req, res, next) => {
     console.error(error.message)
 
     switch (error.name) {
         default:
             return next(error)
         case 'CastError':
-            return response.status(400).send({ error: 'malformed id' })
+            return res.status(400).send({ error: 'malformed id' })
         case 'ValidationError':
-            return res.status(400).json({
+            if (error.code === 11000) 
+                return res.status(409).send({error: 'duplicate values was detected'})
+
+            res.status(400).json({
                 error: error.message
             })
+            break
     } 
 }
 

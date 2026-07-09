@@ -218,3 +218,71 @@ note.save().then(result => {
   mongoose.connection.close()
 })
 ```
+
+# ESLint
+
+This is what i just need...
+
+```sh
+npm install eslint @eslint/js --save-dev
+npx eslint --init
+```
+
+in new config
+```mjs
+import globals from 'globals'
+import js from '@eslint/js'
+// ...
+
+export default [
+  js.configs.recommended,
+  {
+    // ...
+  },
+  { 
+    ignores: ['dist/**'], 
+  }
+]
+```
+
+after
+
+```sh
+npm install --save-dev @stylistic/eslint-plugin
+```
+
+and
+
+```mjs
+import globals from 'globals'
+import js from '@eslint/js'
+import stylisticJs from '@stylistic/eslint-plugin'
+
+export default [
+  {
+    // ...
+    plugins: { 
+      '@stylistic/js': stylisticJs,
+    },
+    rules: { 
+      '@stylistic/js/indent': ['error', 2],
+      '@stylistic/js/linebreak-style': ['error', 'unix'],
+      '@stylistic/js/quotes': ['error', 'single'],
+      '@stylistic/js/semi': ['error', 'never'],
+    },
+  },
+]
+```
+
+and finally add script
+
+```json
+{
+  // ...
+  "scripts": {
+    // ...
+    "lint": "eslint ."
+  },
+  // ...
+}
+```
