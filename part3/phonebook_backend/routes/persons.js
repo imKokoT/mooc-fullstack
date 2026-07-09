@@ -4,49 +4,76 @@ const { Person } = require('../mongo.js')
 const routeUrl = '/api/persons'
 
 
-app.get(routeUrl, (request, response) => {
+app.get(routeUrl, (req, res) => {
     Person.find({}).then(persons =>
-        response.json(persons)
+        res.json(persons)
     )
 })
 
-app.get(`${routeUrl}/:id`, (request, response, next) => {
-    const id = request.params.id
+app.get(`${routeUrl}/:id`, (req, res, next) => {
+    const id = req.params.id
 
     Person.findById(id)
         .then(person => {
             if (person)
-                response.json(person)
+                res.json(person)
             else
-                response.status(404).end()
+                res.status(404).end()
         }).catch(error => 
             next(error)
         )
 })
 
-app.delete(`${routeUrl}/:id`, (request, response, next) =>{
-    const id = request.params.id
+app.delete(`${routeUrl}/:id`, (req, res, next) => {
+    const id = req.params.id
     
     Person.findByIdAndDelete(id)
         .then(person => {
             if (!person)
-                return response.status(404).end()
+                return res.status(404).end()
 
             console.log('DELETE PERSON ID', id)
-            response.status(204).end()
+            res.status(204).end()
         }).catch(error =>
             next(error)
         )
 })
 
-app.post(routeUrl, (request, response) => {
-    const person = request.body
+app.put(`${routeUrl}/:id`, (req, res, next) => {
+    const id = req.params.id
+
+    const newPerson = req.body
+
+    if (!newPerson)
+        return res.status(400).end()
+
+    if (!newPerson.name || !newPerson.number)
+        return res.status(422).end()
+    
+    Person.findById(id)
+        .then(person => {
+            if (!person)
+                return res.status(404).end()
+
+            person.name = newPerson.name
+            person.number = newPerson.number
+            person.save()
+
+            res.status(200).json(person)
+            console.log('UPDATED PERSON', person.id)
+        }).catch(error =>
+            next(error)
+        )
+})
+
+app.post(routeUrl, (req, res) => {
+    const person = req.body
 
     if (!person)
-        return response.status(400).end()
+        return res.status(400).end()
 
     if (!person.name || !person.number)
-        return response.status(422).end()
+        return res.status(422).end()
     
     const newPerson = new Person({
         name: person.name,
@@ -55,12 +82,12 @@ app.post(routeUrl, (request, response) => {
     
     newPerson.save().then(result => {
         console.log('ADDED PERSON', newPerson.id)
-        response.status(201).json(newPerson)
+        res.status(201).json(newPerson)
     }).catch(error => {
         if (error.code === 11000) 
-            return response.status(409).send('duplicate values was detected')
+            return res.status(409).send('duplicate values was detected')
         
         console.error(error)
-        response.status(500).end()
+        res.status(500).end()
     })
 })
