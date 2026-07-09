@@ -1,8 +1,8 @@
 const app = require('../app.js')
-const { persons } = require('../data.js')
 const { Person } = require('../mongo.js')
 
 const routeUrl = '/api/persons'
+
 
 app.get(routeUrl, (request, response) => {
     Person.find({}).then(persons =>
