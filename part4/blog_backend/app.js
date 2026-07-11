@@ -22,6 +22,7 @@ require('./utils/middleware/morgan')
 // static
 
 // routes
+app.use('/api/blogs', require('./routes/blogs'))
 
 // post middleware
 require('./utils/middleware/errorHandler')
