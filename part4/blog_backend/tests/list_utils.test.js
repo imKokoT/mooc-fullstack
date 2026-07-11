@@ -76,3 +76,33 @@ describe('favorite blog', () => {
     assert.deepStrictEqual(result, null)
   })
 })
+
+describe('most blogs', () => {
+  test('not empty', () => {
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepStrictEqual(result, {
+      author: 'Robert C. Martin',
+      blogs: 3
+    })
+  })
+
+  test('empty', () => {
+    const result = listHelper.mostBlogs([])
+    assert.deepStrictEqual(result, null)
+  })
+})
+
+describe('most likes', () => {
+  test('not empty', () => {
+    const result = listHelper.mostLikes(blogs)
+    assert.deepStrictEqual(result, {
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    })
+  })
+
+  test('empty', () => {
+    const result = listHelper.mostLikes([])
+    assert.deepStrictEqual(result, null)
+  })
+})
