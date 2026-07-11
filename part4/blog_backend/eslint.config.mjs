@@ -6,6 +6,11 @@ import stylisticJs from '@stylistic/eslint-plugin'
 export default defineConfig([
   js.configs.recommended,
   {
+    rules: {
+      'no-unused-vars': 'warn'
+    }
+  },
+  {
     languageOptions: {
       globals: globals.node,
     },
