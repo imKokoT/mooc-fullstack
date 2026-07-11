@@ -1,0 +1,10 @@
+
+const logger = require('./utils/logger')
+const config = require('./utils/config')
+
+// init express app
+const app = require('./app')
+
+app.listen(config.PORT, () => {
+  logger.info(`Server running on http://localhost:${config.PORT}`)
+})
