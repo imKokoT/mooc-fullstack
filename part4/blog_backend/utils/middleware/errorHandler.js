@@ -7,7 +7,9 @@ const errorHandler = (error, req, res, next) => {
 
   switch (error.name) {
     default:
-      return next(error)
+      res.status(500).end()
+      next(error)
+      break
     case 'CastError':
       return res.status(400).send({ error: 'malformed id' })
     case 'ValidationError':
