@@ -1,3 +1,4 @@
+const Blog = require('../models/blog')
 
 const blogs = [
   { 
@@ -38,6 +39,21 @@ const blogs = [
   }
 ]
 
+const nonExistingId = async () => {
+  const blog = new Blog({ content: 'willremovethissoon' })
+  await blog.save()
+  await blog.deleteOne()
+
+  return blog._id.toString()
+}
+
+const blogsInDb = async () => {
+  const _blogs = await Blog.find({})
+  return _blogs.map((note) => note.toJSON())
+}
+
 module.exports = {
-  blogs
+  blogs,
+  nonExistingId,
+  blogsInDb
 }

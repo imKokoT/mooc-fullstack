@@ -13,7 +13,7 @@ beforeEach(async () => {
   await Blog.insertMany(helper.blogs)
 })
 
-describe.only('blog api tests', () => {
+describe('blog api tests', () => {
   test('test /api/blogs is JSON', async () => {
     await api
       .get('/api/blogs')
@@ -28,6 +28,18 @@ describe.only('blog api tests', () => {
       response.body.length, 
       helper.blogs.length
     )
+  })
+
+  test.only('test /api/blogs/:id GET format', async () => {
+    const atStart = await helper.blogsInDb()
+    const target = atStart[0]
+
+    const result = await api
+      .get(`/api/blogs/${target.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    assert.deepStrictEqual(result.body, target)
   })
 })
 
