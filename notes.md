@@ -286,3 +286,31 @@ and finally add script
   // ...
 }
 ```
+
+# Testing
+
+## SuperTest
+
+Handy tool for backend testing
+
+```sh
+npm install --save-dev supertest
+```
+
+## test.only()
+
+One way to test only specific tests while development is to use
+
+```js
+describe.only(...)
+test.only(...)
+```
+
+and after call them by
+
+```sh
+npm test -- --test-only
+```
+
+> [!IMPORTANT]
+> Do not forget to remove them after tests development
