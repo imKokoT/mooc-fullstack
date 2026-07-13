@@ -82,6 +82,35 @@ describe('blog api tests', () => {
       assert.strictEqual(result.likes, 0)
     })
   })
+
+  test('test /api/blogs/:id DELETE', async () => {
+    const atStart = await helper.fetchBlogs()
+    const target = atStart[0]
+
+    await api.delete(`/api/blogs/${target.id}`).expect(204)
+
+    const blogsAfter = await helper.fetchBlogs()
+    assert.strictEqual(
+      blogsAfter.length,
+      atStart.length - 1
+    )
+  })
+
+  test('test /api/blogs/:id PUT', async () => {
+    const atStart = await helper.fetchBlogs()
+    const target = atStart[0]
+    const newContent = {...target}
+    newContent.likes += 1
+
+    await api.put(`/api/blogs/${target.id}`).send(newContent).expect(200)
+
+    const blogsAfter = await helper.fetchBlogs()
+    const updatedTarget = blogsAfter.find(
+      blog => blog.id === target.id
+    )
+
+    assert.notStrictEqual(target.likes, updatedTarget.likes)
+  })
   
   after(async () => {
     await mongoose.connection.close()
