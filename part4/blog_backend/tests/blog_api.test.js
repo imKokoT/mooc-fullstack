@@ -30,8 +30,8 @@ describe('blog api tests', () => {
     )
   })
 
-  test.only('test /api/blogs/:id GET format', async () => {
-    const atStart = await helper.blogsInDb()
+  test('test /api/blogs/:id GET format', async () => {
+    const atStart = await helper.fetchBlogs()
     const target = atStart[0]
 
     const result = await api
@@ -40,6 +40,47 @@ describe('blog api tests', () => {
       .expect('Content-Type', /application\/json/)
 
     assert.deepStrictEqual(result.body, target)
+  })
+
+  describe('test /api/blogs POST', () => {
+    test('no body', async () => {
+      await api.post('/api/blogs').expect(400)
+      
+      const blogsAfter = await helper.fetchBlogs()
+      assert.strictEqual(helper.blogs.length, blogsAfter.length)
+    })
+
+    test('corrupted body', async () => {
+      const corrupted = {}
+
+      await api.post('/api/blogs').send(corrupted).expect(400)
+
+      const blogsAfter = await helper.fetchBlogs()
+      assert.strictEqual(helper.blogs.length, blogsAfter.length)
+    })
+
+    test('valid', async () => {
+      const content = {
+        title: 'title',
+        author: 'author',
+        url: 'https://example.com'
+      }
+
+      const result = (await api.post('/api/blogs').send(content).expect(201)).body
+
+      // is added
+      const blogsAfter = await helper.fetchBlogs()
+      assert.notStrictEqual(helper.blogs.length, blogsAfter.length)
+
+      console.log(result)
+      // validate keys
+      Object.keys(content).forEach(k => {
+        assert.strictEqual(result[k], content[k])
+      })
+
+      // likes is default 0
+      assert.strictEqual(result.likes, 0)
+    })
   })
 })
 
