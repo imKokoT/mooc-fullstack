@@ -8,12 +8,12 @@ const Blog = require('../models/blog')
 
 const api = supertest(app)
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.blogs)
-})
-
 describe('blog api tests', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.blogs)
+  })
+
   test('test /api/blogs is JSON', async () => {
     await api
       .get('/api/blogs')
@@ -82,8 +82,8 @@ describe('blog api tests', () => {
       assert.strictEqual(result.likes, 0)
     })
   })
-})
-
-after(async () => {
-  await mongoose.connection.close()
+  
+  after(async () => {
+    await mongoose.connection.close()
+  })
 })
