@@ -23,6 +23,8 @@ require('./utils/middleware/morgan')
 
 // routes
 app.use('/api/blogs', require('./routes/blogs'))
+app.use('/api/users', require('./routes/users'))
+app.use('/api/login', require('./routes/login'))
 
 // post middleware
 require('./utils/middleware/errorHandler')
