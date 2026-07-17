@@ -11,8 +11,10 @@ GET {{baseUrl}}/api/blogs/{{id}} HTTP/1.1
 # @prompt title
 # @prompt author
 # @prompt url
+# @prompt token
 POST {{baseUrl}}/api/blogs HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
     "title": "{{title}}",

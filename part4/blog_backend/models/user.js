@@ -4,14 +4,21 @@ const UserSchema = mongoose.Schema({
   username: {
     type: String,
     minLength: 3,
-    trim: true
+    trim: true,
+    unique: true
   },
   password: {
     type: String
   },
   
-  created: String,
-  last_login: String,
+  created: {
+    type: Date,
+    default: Date.now
+  },
+  last_login: {
+    type: Date,
+    default: Date.now
+  },
 
   is_admin: {
     type: Boolean,
