@@ -8,8 +8,7 @@ const BlogSchema = mongoose.Schema({
   },
   author: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   url: {
     type: String,
@@ -26,6 +25,12 @@ const BlogSchema = mongoose.Schema({
     ref: 'User'
   }
 })
+
+// grouped unique keys
+BlogSchema.index(
+  { author: 1, title: 1 },
+  { unique: true }
+)
 
 BlogSchema.set('toJSON', {
   transform: (document, returnedObject) => {

@@ -1,9 +1,11 @@
 const logger = require('../logger')
 const app = require('../../app')
+const { DEBUG } = require('../config')
 
 
 const errorHandler = (error, req, res, next) => {
-  logger.error(error.message)
+  if (DEBUG)
+    logger.error(error.message)
 
   switch (error.name) {
     default:
@@ -13,6 +15,14 @@ const errorHandler = (error, req, res, next) => {
     case 'CastError':
       return res.status(400).send({ error: 'malformed id' })
     case 'ValidationError':
+      if (error.code === 11000)
+        return res.status(409).send({ error: 'duplicate values was detected' })
+
+      res.status(400).json({
+        error: error.message
+      })
+      break
+    case 'MongoServerError':
       if (error.code === 11000)
         return res.status(409).send({ error: 'duplicate values was detected' })
 

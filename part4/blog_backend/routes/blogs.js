@@ -1,7 +1,9 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
-
+const { getTokenFrom } = require('../utils/misc')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 
 router.get('/', async (req, res) => {
   const blogs = await Blog.find({})
@@ -9,7 +11,14 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  
+  const user = await User.findById(decodedToken.id)
+  if (!user)
+    return res.status(400).json({ error: 'UserId missing or not valid' })
+
   const blog = new Blog(req.body)
+  blog.author = user.username
 
   const result = await blog.save()
   logger.info('ADDED Blog ID', result.id)
