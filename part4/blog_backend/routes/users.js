@@ -11,8 +11,4 @@ router.get('/:id',async (req, res) => {
   res.sendStatus(501)
 })
 
-router.post('/', async (req, res) => {
-  res.sendStatus(501)
-})
-
 module.exports = router
