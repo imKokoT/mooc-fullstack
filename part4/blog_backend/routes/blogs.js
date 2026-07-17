@@ -7,6 +7,10 @@ const User = require('../models/user')
 
 router.get('/', async (req, res) => {
   const blogs = await Blog.find({})
+    .populate('owner', {
+      username: 1,
+      created: 1
+    })
   res.json(blogs)
 })
 
@@ -17,7 +21,10 @@ router.post('/', async (req, res) => {
   if (!user)
     return res.status(400).json({ error: 'UserId missing or not valid' })
 
-  const blog = new Blog(req.body)
+  const blog = new Blog({
+    ...req.body,
+    owner: user.id
+  })
   blog.author = user.username
 
   const result = await blog.save()
@@ -29,6 +36,10 @@ router.get('/:id', async (req, res) => {
   const id = req.params.id
 
   const blog = await Blog.findById(id)
+    .populate('owner', {
+      username: 1,
+      created: 1
+    })
   if (!blog)
     return res.status(404).end()
 

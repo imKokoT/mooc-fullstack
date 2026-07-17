@@ -27,6 +27,9 @@ const BlogSchema = mongoose.Schema({
 })
 
 // grouped unique keys
+//
+// PS so sad mongoose-mongodb does not allow
+// indexes through refs, so author still relevant
 BlogSchema.index(
   { author: 1, title: 1 },
   { unique: true }
