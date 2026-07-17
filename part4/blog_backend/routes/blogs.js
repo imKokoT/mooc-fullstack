@@ -37,6 +37,11 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   const id = req.params.id
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  
+  const user = await User.findById(decodedToken.id)
+  if (!user)
+    return res.status(400).json({ error: 'UserId missing or not valid' })
 
   const blog = await Blog.findByIdAndDelete(id)
   if (!blog)
@@ -49,15 +54,20 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const id = req.params.id
   const newBlog = req.body
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  
+  const user = await User.findById(decodedToken.id)
+  if (!user)
+    return res.status(400).json({ error: 'UserId missing or not valid' })
 
   const blog = await Blog.findById(id)
   if (!blog)
     return res.status(404).end()
 
   blog.title = newBlog.title
-  blog.author = newBlog.author
+  blog.author = user.username
   blog.url = newBlog.url
-  blog.likes = newBlog.likes
+  blog.likes = newBlog.likes ? newBlog.likes : blog.likes
 
   await blog.save()
   logger.info('UPDATED Blog ID', id)
