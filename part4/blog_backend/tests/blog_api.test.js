@@ -5,13 +5,34 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
 
-describe('blog api tests', () => {
+describe.only('blog api tests', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.blogs)
+    await User.deleteMany({})
+
+    const _users = []
+    helper.users.forEach(async (user) => {
+      _users.push({
+        username: user.username,
+        password: await bcrypt.hash(user.password, 10)
+      })
+    })
+    
+    const users = await User.insertMany(_users)
+
+    const blogs = users.flatMap((user, i) =>
+      helper.users[i].blogs.map(blog => ({
+        ...blog,
+        owner: user._id
+      }))
+    )
+
+    await Blog.insertMany(blogs)
   })
 
   test('test /api/blogs is JSON', async () => {

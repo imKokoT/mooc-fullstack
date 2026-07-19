@@ -1,7 +1,7 @@
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-const usersSignup = [
+const users = [
   {
     username: 'Michael Chan',
     password: 'abc',
@@ -63,7 +63,7 @@ const fetchUsers = async () => {
 }
 
 module.exports = {
-  usersSignup,
+  users: users,
   fetchBlogs,
   fetchUsers
 }
