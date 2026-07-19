@@ -6,10 +6,6 @@ const BlogSchema = mongoose.Schema({
     trim: true,
     required: true
   },
-  author: {
-    type: String,
-    required: true
-  },
   url: {
     type: String,
     required: true,
@@ -26,12 +22,14 @@ const BlogSchema = mongoose.Schema({
   }
 })
 
-// grouped unique keys
-//
-// PS so sad mongoose-mongodb does not allow
-// indexes through refs, so author still relevant
+/*
+i got an idea to just index owner ref and title.
+if this would work it will be cool
+
+year this works, ref is barely id so indexation works
+*/
 BlogSchema.index(
-  { author: 1, title: 1 },
+  { owner: 1, title: 1 },
   { unique: true }
 )
 

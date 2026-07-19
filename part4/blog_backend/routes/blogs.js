@@ -9,7 +9,8 @@ router.get('/', async (req, res) => {
   const blogs = await Blog.find({})
     .populate('owner', {
       username: 1,
-      created: 1
+      created: 1,
+      last_login: 1
     })
   res.json(blogs)
 })
@@ -76,7 +77,6 @@ router.put('/:id', async (req, res) => {
     return res.status(404).end()
 
   blog.title = newBlog.title
-  blog.author = user.username
   blog.url = newBlog.url
   blog.likes = newBlog.likes ? newBlog.likes : blog.likes
 
