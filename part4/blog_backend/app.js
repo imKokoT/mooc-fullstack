@@ -14,6 +14,7 @@ mongoose
   ).catch((error) => {
     logger.error('error connection to MongoDB:', error.message)
   })
+mongoose.set('transactionAsyncLocalStorage', true)
 
 // pre middleware
 app.use(express.json())

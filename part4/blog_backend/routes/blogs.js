@@ -2,6 +2,7 @@ const router = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
 const requireLogin = require('../utils/middleware/requireLogin')
+const mongoose = require('mongoose')
 
 
 router.get('/', async (req, res) => {
@@ -21,12 +22,35 @@ router.post('/', requireLogin, async (req, res) => {
   })
   
   blog.author = req.user.username
-  req.user.notes.push(blog.id)
+  req.user.blogs.push(blog.id)
 
-  const result = await blog.save()
-  await req.user.save()
-  logger.info('ADDED Blog ID', result.id)
-  res.status(201).json(result)
+  /*
+    i thought SQLAlchemy's transactions are aquard,
+    but mongoose totally outplayed it...
+  */
+  /*const session = await mongoose.startSession()
+  try {
+    await session.withTransaction(async () => {
+      await blog.save(session)
+      await req.user.save(session)
+    })
+  }
+  finally {
+    await session.endSession()
+  }*/
+
+  /* 
+    after some research of mongoose docs i found actually what i need 
+  
+    NOTE mongoose.set('transactionAsyncLocalStorage', true) is required
+  */
+  await mongoose.connection.transaction(async () =>{
+    await blog.save()
+    await req.user.save()
+  })
+  
+  logger.info('ADDED Blog ID', blog.id)
+  res.status(201).json(blog)
 })
 
 router.get('/:id', async (req, res) => {
@@ -47,12 +71,23 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
   
-  if (!req.user.notes.includes(id))
+  if (!req.user.blogs.includes(id))
     return res.sendStatus(403)
   
-  const blog = await Blog.findByIdAndDelete(id)
+  const blog = await Blog.findById(id)
   if (!blog)
     return res.status(404).end()
+
+  // lets ignore concurrency for this small app because
+  // error handling in transactions is aquard :P
+  await mongoose.connection.transaction(async () => {
+    await blog.deleteOne()
+
+    req.user.blogs = req.user.blogs.filter(
+      blogId => blogId.toString() !== id
+    )
+    await req.user.save()
+  })
 
   logger.info('DELETE Blog ID', id)
   res.status(204).end()
@@ -62,7 +97,7 @@ router.put('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
   const newBlog = req.body
   
-  if (!req.user.notes.includes(id))
+  if (!req.user.blogs.includes(id))
     return res.sendStatus(403)
 
   const blog = await Blog.findById(id)
