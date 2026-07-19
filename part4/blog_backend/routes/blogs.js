@@ -1,9 +1,8 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
-const { getTokenFrom } = require('../utils/misc')
-const jwt = require('jsonwebtoken')
-const User = require('../models/user')
+const requireLogin = require('../utils/middleware/requireLogin')
+
 
 router.get('/', async (req, res) => {
   const blogs = await Blog.find({})
@@ -15,18 +14,12 @@ router.get('/', async (req, res) => {
   res.json(blogs)
 })
 
-router.post('/', async (req, res) => {
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
-  
-  const user = await User.findById(decodedToken.id)
-  if (!user)
-    return res.status(400).json({ error: 'UserId missing or not valid' })
-
+router.post('/', requireLogin, async (req, res) => {
   const blog = new Blog({
     ...req.body,
-    owner: user.id
+    owner: req.user.id
   })
-  blog.author = user.username
+  blog.author = req.user.username
 
   const result = await blog.save()
   logger.info('ADDED Blog ID', result.id)
@@ -47,14 +40,9 @@ router.get('/:id', async (req, res) => {
   res.json(blog)
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
   
-  const user = await User.findById(decodedToken.id)
-  if (!user)
-    return res.status(400).json({ error: 'UserId missing or not valid' })
-
   const blog = await Blog.findByIdAndDelete(id)
   if (!blog)
     return res.status(404).end()
@@ -63,15 +51,10 @@ router.delete('/:id', async (req, res) => {
   res.status(204).end()
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
   const newBlog = req.body
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
   
-  const user = await User.findById(decodedToken.id)
-  if (!user)
-    return res.status(400).json({ error: 'UserId missing or not valid' })
-
   const blog = await Blog.findById(id)
   if (!blog)
     return res.status(404).end()
