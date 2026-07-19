@@ -19,9 +19,12 @@ router.post('/', requireLogin, async (req, res) => {
     ...req.body,
     owner: req.user.id
   })
+  
   blog.author = req.user.username
+  req.user.notes.push(blog.id)
 
   const result = await blog.save()
+  await req.user.save()
   logger.info('ADDED Blog ID', result.id)
   res.status(201).json(result)
 })
@@ -32,7 +35,8 @@ router.get('/:id', async (req, res) => {
   const blog = await Blog.findById(id)
     .populate('owner', {
       username: 1,
-      created: 1
+      created: 1,
+      last_login: 1
     })
   if (!blog)
     return res.status(404).end()
@@ -42,6 +46,9 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
+  
+  if (!req.user.notes.includes(id))
+    return res.sendStatus(403)
   
   const blog = await Blog.findByIdAndDelete(id)
   if (!blog)
@@ -55,6 +62,9 @@ router.put('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
   const newBlog = req.body
   
+  if (!req.user.notes.includes(id))
+    return res.sendStatus(403)
+
   const blog = await Blog.findById(id)
   if (!blog)
     return res.status(404).end()

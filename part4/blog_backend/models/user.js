@@ -10,6 +10,13 @@ const UserSchema = mongoose.Schema({
   password: {
     type: String
   },
+
+  notes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ],
   
   created: {
     type: Date,
