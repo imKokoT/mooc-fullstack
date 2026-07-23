@@ -7,15 +7,17 @@ const helper = require('./helper')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const api = supertest(app)
-let logins = []
+let logins = {}
 
-describe.only('blog api tests', () => {
+describe('blog api tests', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
     await User.deleteMany({})
 
+    // create users
     const _users = []
     for (const user of helper.users) {
       _users.push({
@@ -23,17 +25,54 @@ describe.only('blog api tests', () => {
         password: await bcrypt.hash(user.password, 10)
       })
     }
-    
+
     const users = await User.insertMany(_users)
 
-    const blogs = users.flatMap((user, i) =>
-      helper.users[i].blogs.map(blog => ({
-        ...blog,
-        owner: user._id
-      }))
-    )
+    // create blogs
+    const blogs = []
+    users.forEach((user, i) => {
+      helper.users[i].blogs.forEach(blog => {
+        blogs.push({
+          ...blog,
+          owner: user._id
+        })
+      })
+    })
 
-    await Blog.insertMany(blogs)
+    const savedBlogs = await Blog.insertMany(blogs)
+
+    // fill users.blogs references
+    let blogIndex = 0
+
+    for (let i = 0; i < users.length; i++) {
+      const count = helper.users[i].blogs.length
+
+      users[i].blogs = savedBlogs
+        .slice(blogIndex, blogIndex + count)
+        .map(blog => blog._id)
+
+      blogIndex += count
+
+      await users[i].save()
+    }
+
+    // login
+    for (const _user of helper.users) {
+      const username = _user.username
+      const user = await User.findOne({ username })
+
+      const userForToken = {
+        username: user.username,
+        id: user.id,
+      }
+
+      const token = jwt.sign(
+        userForToken, process.env.SECRET,
+        { expiresIn: 60*60 }
+      )
+
+      logins[user.username] = token
+    }
   })
 
   test('test /api/blogs is JSON', async () => {
@@ -70,35 +109,50 @@ describe.only('blog api tests', () => {
 
   describe('test /api/blogs POST', () => {
     test('no body', async () => {
-      await api.post('/api/blogs').expect(400)
+      const blogsBefore = await helper.fetchBlogs()
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${logins[helper.users[0].username]}`)
+        .expect(400)
       
       const blogsAfter = await helper.fetchBlogs()
-      assert.strictEqual(helper.blogs.length, blogsAfter.length)
+      assert.strictEqual(blogsBefore.length, blogsAfter.length)
     })
 
     test('corrupted body', async () => {
+      const blogsBefore = await helper.fetchBlogs()
       const corrupted = {}
 
-      await api.post('/api/blogs').send(corrupted).expect(400)
+      await api
+        .post('/api/blogs')
+        .send(corrupted)
+        .set('Authorization', `Bearer ${logins[helper.users[0].username]}`)
+        .expect(400)
 
       const blogsAfter = await helper.fetchBlogs()
-      assert.strictEqual(helper.blogs.length, blogsAfter.length)
+      assert.strictEqual(blogsBefore.length, blogsAfter.length)
     })
 
     test('valid', async () => {
       const content = {
         title: 'title',
-        author: 'author',
         url: 'https://example.com'
       }
 
-      const result = (await api.post('/api/blogs').send(content).expect(201)).body
+      const blogsBefore = await helper.fetchBlogs()
+
+      const result = (await api
+        .post('/api/blogs')
+        .send(content)
+        .set('Authorization', `Bearer ${logins[helper.users[0].username]}`)
+        .expect(201)
+      ).body
 
       // is added
       const blogsAfter = await helper.fetchBlogs()
-      assert.notStrictEqual(helper.blogs.length, blogsAfter.length)
+      assert.notStrictEqual(blogsBefore.length, blogsAfter.length)
 
-      console.log(result)
       // validate keys
       Object.keys(content).forEach(k => {
         assert.strictEqual(result[k], content[k])
@@ -113,7 +167,10 @@ describe.only('blog api tests', () => {
     const atStart = await helper.fetchBlogs()
     const target = atStart[0]
 
-    await api.delete(`/api/blogs/${target.id}`).expect(204)
+    await api
+      .delete(`/api/blogs/${target.id}`)
+      .set('Authorization', `Bearer ${logins[helper.users[0].username]}`)
+      .expect(204)
 
     const blogsAfter = await helper.fetchBlogs()
     assert.strictEqual(
@@ -128,7 +185,11 @@ describe.only('blog api tests', () => {
     const newContent = {...target}
     newContent.likes += 1
 
-    await api.put(`/api/blogs/${target.id}`).send(newContent).expect(200)
+    await api
+      .put(`/api/blogs/${target.id}`)
+      .set('Authorization', `Bearer ${logins[helper.users[0].username]}`)
+      .send(newContent)
+      .expect(200)
 
     const blogsAfter = await helper.fetchBlogs()
     const updatedTarget = blogsAfter.find(
