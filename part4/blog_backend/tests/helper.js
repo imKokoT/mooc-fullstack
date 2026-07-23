@@ -1,6 +1,7 @@
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const totalBlogs = 6
 const users = [
   {
     username: 'Michael Chan',
@@ -52,18 +53,19 @@ const users = [
   }
 ]
 
-const fetchBlogs = async () => {
-  const _blogs = await Blog.find({})
-  return _blogs.map((note) => note.toJSON())
+async function fetchBlogs(filter = {}) {
+  const _blogs = await Blog.find({}).populate('owner', filter)
+  return JSON.parse(JSON.stringify(_blogs))
 }
 
-const fetchUsers = async () => {
-  const users = await User.find({})
-  return users.map(user => user.toJSON())
+async function fetchUsers(filter = {}) {
+  const users = await User.find({}).populate('blogs', filter)
+  return JSON.parse(JSON.stringify(users))
 }
 
 module.exports = {
-  users: users,
+  users,
+  totalBlogs,
   fetchBlogs,
   fetchUsers
 }

@@ -9,6 +9,7 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
 const api = supertest(app)
+let logins = []
 
 describe.only('blog api tests', () => {
   beforeEach(async () => {
@@ -16,12 +17,12 @@ describe.only('blog api tests', () => {
     await User.deleteMany({})
 
     const _users = []
-    helper.users.forEach(async (user) => {
+    for (const user of helper.users) {
       _users.push({
         username: user.username,
         password: await bcrypt.hash(user.password, 10)
       })
-    })
+    }
     
     const users = await User.insertMany(_users)
 
@@ -44,15 +45,19 @@ describe.only('blog api tests', () => {
 
   test('test /api/blogs GET returns same length as init', async () => {
     const response = await api.get('/api/blogs')
-    
+
     assert.strictEqual(
       response.body.length, 
-      helper.blogs.length
+      helper.totalBlogs
     )
   })
 
   test('test /api/blogs/:id GET format', async () => {
-    const atStart = await helper.fetchBlogs()
+    const atStart = await helper.fetchBlogs({
+      created: 1,
+      last_login: 1,
+      username: 1
+    })
     const target = atStart[0]
 
     const result = await api
