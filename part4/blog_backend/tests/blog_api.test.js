@@ -198,6 +198,40 @@ describe('blog api tests', () => {
 
     assert.notStrictEqual(target.likes, updatedTarget.likes)
   })
+
+  describe('unauthorized test', () => {
+    test('test /api/blogs/ POST', async () => {
+      await api
+        .post('/api/blogs')
+        .expect(401)
+    })
+
+    test('test /api/blogs/:id DELETE', async () => {
+      const atStart = await helper.fetchBlogs({
+        created: 1,
+        last_login: 1,
+        username: 1
+      })
+      const target = atStart[0]
+
+      await api
+        .delete(`/api/blogs/${target.id}`)
+        .expect(401)
+    })
+
+    test('test /api/blogs/:id PUT', async () => {
+      const atStart = await helper.fetchBlogs({
+        created: 1,
+        last_login: 1,
+        username: 1
+      })
+      const target = atStart[0]
+
+      await api
+        .put(`/api/blogs/${target.id}`)
+        .expect(401)
+    })
+  })
   
   after(async () => {
     await mongoose.connection.close()
