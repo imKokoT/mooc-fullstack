@@ -232,6 +232,36 @@ describe('blog api tests', () => {
         .expect(401)
     })
   })
+
+  describe('forbidden test', () => {
+    test('test /api/blogs/:id DELETE', async () => {
+      const atStart = await helper.fetchBlogs({
+        created: 1,
+        last_login: 1,
+        username: 1
+      })
+      const target = atStart[1]
+
+      await api
+        .delete(`/api/blogs/${target.id}`)
+        .set('Authorization', `Bearer ${logins[helper.users[0].username]}`)
+        .expect(403)
+    })
+
+    test('test /api/blogs/:id PUT', async () => {
+      const atStart = await helper.fetchBlogs({
+        created: 1,
+        last_login: 1,
+        username: 1
+      })
+      const target = atStart[1]
+
+      await api
+        .put(`/api/blogs/${target.id}`)
+        .set('Authorization', `Bearer ${logins[helper.users[0].username]}`)
+        .expect(403)
+    })
+  })
   
   after(async () => {
     await mongoose.connection.close()
