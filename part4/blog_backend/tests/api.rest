@@ -43,16 +43,12 @@ Authorization: Bearer {{token}}
 
 
 ### GET ALL USERS
-# @prompt token
 GET {{baseUrl}}/api/users HTTP/1.1
-Authorization: Bearer {{token}}
 
 
 ### GET USER
 # @prompt id
-# @prompt token
 GET {{baseUrl}}/api/users/{{id}} HTTP/1.1
-Authorization: Bearer {{token}}
 
 
 ### SIGNUP

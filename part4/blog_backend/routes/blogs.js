@@ -71,7 +71,7 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
   
-  if (!req.user.blogs.includes(id))
+  if (!req.user.blogs.includes(id) && !req.user.is_admin)
     return res.sendStatus(403)
   
   const blog = await Blog.findById(id)
@@ -97,7 +97,7 @@ router.put('/:id', requireLogin, async (req, res) => {
   const id = req.params.id
   const newBlog = req.body
   
-  if (!req.user.blogs.includes(id))
+  if (!req.user.blogs.includes(id) && !req.user.is_admin)
     return res.sendStatus(403)
 
   const blog = await Blog.findById(id)
