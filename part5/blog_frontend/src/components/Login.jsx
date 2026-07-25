@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import LoginContext from '../contexts/LoginContext'
+import LoginService from '../services/login'
 
 
 function Login() {
+  const { setUser } = useContext(LoginContext)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -10,10 +13,33 @@ function Login() {
   const handlePasswordChange = (event) =>
     setPassword(event.target.value)
 
-  function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault()
 
-    console.log(username, password)
+    try {
+      const result = await LoginService.login({
+        username: username,
+        password: password
+      })
+
+      onSuccessLogin(result)
+    }
+    catch (error) {
+      console.error('login failed:', error.response.data.error)
+      return
+    }
+  }
+  
+  function onSuccessLogin(data) {
+    console.log('login success of user ', username)
+    
+    // cleanup
+    setUsername('')
+    setPassword('')
+  
+    // store user
+    setUser(data)
+    window.localStorage.setItem('user', JSON.stringify(data))
   }
 
   return (
