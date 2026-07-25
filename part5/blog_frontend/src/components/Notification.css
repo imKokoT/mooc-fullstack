@@ -1,0 +1,32 @@
+/*
+POSITIONS
+
+first, second {} - OR
+parent child {} - child inside parent
+.class1.class2 {} - element has both class1 and class2
+*/
+
+
+.notification, 
+.notification.info {
+    border: 2px solid rgb(207, 117, 15);
+    border-radius: 15px;
+
+    background-color: rgb(244, 192, 124);
+    padding-inline: 40px;
+    padding-block: 15px;
+    margin-inline: -20%;
+    margin-bottom: 15px;
+
+    font-size: large;
+}
+
+.notification.success {
+    background-color: greenyellow;
+    border-color: green;
+}
+
+.notification.error {
+    background-color: lightcoral;
+    border-color: brown;
+}
