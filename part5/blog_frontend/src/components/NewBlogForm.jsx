@@ -38,7 +38,8 @@ function NewBlogForm({ blogs, setBlogs }) {
 
     setNotification({
       message: 'Created new Blog successfully!',
-      msgType: 'success'
+      msgType: 'success',
+      timeout: 3
     })
     console.log('added new blog', data)
   }

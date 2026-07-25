@@ -63,10 +63,10 @@ function App() {
   if (!user)
     return (
       <div>
-      <AppContext.Provider value={{setNotification}}>
+      <AppContext.Provider value={{setNotification, notification}}>
       <LoginContext.Provider value={{user, setUser}}>
 
-        <Notification notification={notification} />
+        <Notification />
 
         <Login />
      
@@ -77,12 +77,15 @@ function App() {
 
   return (
     <div>
-    <AppContext.Provider value={{blogs, setBlogs, setNotification}}>
+    <AppContext.Provider value={{
+      blogs, setBlogs, 
+      notification, setNotification
+    }}>
     <LoginContext.Provider value={{user, setUser}}>
       
       <TopBar />
 
-      <Notification notification={notification} />
+      <Notification />
 
       <h2>Create New Blog</h2>
       <NewBlogForm blogs={blogs} setBlogs={setBlogs} />
