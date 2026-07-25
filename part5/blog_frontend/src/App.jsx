@@ -1,12 +1,30 @@
 import { 
   useState,
-  useEffect
+  useEffect,
+  useContext
 } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Login from './components/Login'
 import LoginContext from './contexts/LoginContext'
 
+
+function User() {
+  const {user, setUser} = useContext(LoginContext)
+
+  function handleLogout() {
+    window.localStorage.removeItem('user')
+    setUser(null)
+    console.log('user logout')
+  } 
+
+  return (
+    <div>
+      <div>User {user.username}</div>
+      <button onClick={handleLogout}>Logout</button>
+    </div>
+  )
+}
 
 function App() {
   const [user, setUser] = useState(null)
@@ -38,10 +56,19 @@ function App() {
     }
   }, [])
 
+  if (!user)
+    return (
+      <div>
+      <LoginContext.Provider value={{user, setUser}}>
+        <Login />
+      </LoginContext.Provider>
+      </div>
+    )
+
   return (
     <div>
     <LoginContext.Provider value={{user, setUser}}>
-      <Login />
+      <User />
 
       <h2>blogs</h2>
       {blogs.map(blog =>
