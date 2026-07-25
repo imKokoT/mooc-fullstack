@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
 import LoginContext from '../contexts/LoginContext'
+import BlogService from '../services/blogs'
 import LoginService from '../services/login'
 
 
@@ -39,6 +40,7 @@ function Login() {
   
     // store user
     setUser(data)
+    BlogService.setToken(data.token)
     window.localStorage.setItem('user', JSON.stringify(data))
   }
 
