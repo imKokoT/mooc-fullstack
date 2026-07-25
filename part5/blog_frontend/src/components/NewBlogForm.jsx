@@ -21,7 +21,7 @@ function NewBlogForm({ blogs, setBlogs }) {
     }
     catch (error) {
       setNotification({
-        message: error.response.data.error,
+        message: 'Error ' + (error.response.data.error ? error.response.data.error : error.status),
         msgType: 'error'
       })
       console.error('failed create new blog:', error.response.data.error)

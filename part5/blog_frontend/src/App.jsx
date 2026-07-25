@@ -38,6 +38,14 @@ function App() {
     BlogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
+    .catch(error => {
+      setNotification({
+        message: `failed to fetch blogs: code ${error.status}`,
+        msgType: 'error'
+      })
+  
+      console.error('Failed to fetch blogs:', error.response.data.error)
+    })
   }, [])
   
   useEffect(() => {
