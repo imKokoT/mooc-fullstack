@@ -2,10 +2,12 @@ import { useContext, useState } from 'react'
 import LoginContext from '../contexts/LoginContext'
 import BlogService from '../services/blogs'
 import LoginService from '../services/login'
+import AppContext from '../contexts/AppContext'
 
 
 function Login() {
   const { setUser } = useContext(LoginContext)
+  const { setNotification } = useContext(AppContext)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -26,22 +28,30 @@ function Login() {
       onSuccessLogin(result)
     }
     catch (error) {
+      setNotification({
+        message: error.response.data.error,
+        msgType: 'error'
+      })
       console.error('login failed:', error.response.data.error)
       return
     }
   }
   
   function onSuccessLogin(data) {
-    console.log('login success of user ', username)
-    
     // cleanup
     setUsername('')
     setPassword('')
-  
+    
     // store user
     setUser(data)
     BlogService.setToken(data.token)
     window.localStorage.setItem('user', JSON.stringify(data))
+
+    setNotification({
+      message: 'success login!',
+      msgType: 'success'
+    })
+    console.log('login success of user ', username)
   }
 
   return (

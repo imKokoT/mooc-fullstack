@@ -3,11 +3,13 @@ import {
   useEffect,
   useContext
 } from 'react'
-import blogService from './services/blogs'
+import AppContext from './contexts/AppContext'
+import BlogService from './services/blogs'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Login from './components/Login'
 import LoginContext from './contexts/LoginContext'
+import Notification from './components/Notification'
 
 
 function TopBar() {
@@ -30,9 +32,10 @@ function TopBar() {
 function App() {
   const [user, setUser] = useState(null)
   const [blogs, setBlogs] = useState([])
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    BlogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
   }, [])
@@ -51,7 +54,7 @@ function App() {
       // does not look as right way to solve this problem
       setTimeout(() => setUser(user), 300)
       
-      blogService.setToken(user.token)
+      BlogService.setToken(user.token)
       
       console.log('reused login token from local storage')
     }
@@ -60,16 +63,26 @@ function App() {
   if (!user)
     return (
       <div>
+      <AppContext.Provider value={{setNotification}}>
       <LoginContext.Provider value={{user, setUser}}>
+
+        <Notification notification={notification} />
+
         <Login />
+     
       </LoginContext.Provider>
+      </AppContext.Provider>
       </div>
     )
 
   return (
     <div>
+    <AppContext.Provider value={{blogs, setBlogs, setNotification}}>
     <LoginContext.Provider value={{user, setUser}}>
+      
       <TopBar />
+
+      <Notification notification={notification} />
 
       <h2>Create New Blog</h2>
       <NewBlogForm blogs={blogs} setBlogs={setBlogs} />
@@ -78,7 +91,9 @@ function App() {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
+    
     </LoginContext.Provider>
+    </AppContext.Provider>
     </div>
   )
 }

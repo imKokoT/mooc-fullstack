@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import BlogService from '../services/blogs'
+import AppContext from '../contexts/AppContext'
 
 
 function NewBlogForm({ blogs, setBlogs }) {
+  const { setNotification } = useContext(AppContext)
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
 
@@ -18,6 +20,10 @@ function NewBlogForm({ blogs, setBlogs }) {
       onSuccess(result)
     }
     catch (error) {
+      setNotification({
+        message: error.response.data.error,
+        msgType: 'error'
+      })
       console.error('failed create new blog:', error.response.data.error)
       return
     }
@@ -25,6 +31,15 @@ function NewBlogForm({ blogs, setBlogs }) {
 
   function onSuccess(data) {
     setBlogs(blogs.concat(data))
+
+    // cleanup
+    setTitle('')
+    setUrl('')
+
+    setNotification({
+      message: 'Created new Blog successfully!',
+      msgType: 'success'
+    })
     console.log('added new blog', data)
   }
 
