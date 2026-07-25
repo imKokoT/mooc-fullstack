@@ -3,13 +3,14 @@ import {
   useEffect,
   useContext
 } from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
+import Blog from './components/Blog'
+import NewBlogForm from './components/NewBlogForm'
 import Login from './components/Login'
 import LoginContext from './contexts/LoginContext'
 
 
-function User() {
+function TopBar() {
   const {user, setUser} = useContext(LoginContext)
 
   function handleLogout() {
@@ -68,9 +69,12 @@ function App() {
   return (
     <div>
     <LoginContext.Provider value={{user, setUser}}>
-      <User />
+      <TopBar />
 
-      <h2>blogs</h2>
+      <h2>Create New Blog</h2>
+      <NewBlogForm blogs={blogs} setBlogs={setBlogs} />
+      
+      <h2>Blogs List</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}

@@ -4,7 +4,7 @@ const baseUrl = '/api/blogs'
 let _token = null
 
 function setToken(token) {
-  _token = token
+  _token = `Bearer ${token}`
 }
 
 function getAll() {
@@ -12,7 +12,17 @@ function getAll() {
   return request.then(response => response.data)
 }
 
+function createBlog(blog) {
+  const request = axios.post(baseUrl, blog, {
+    headers: {
+      Authorization: _token
+    }})
+  return request.then(res => res.data)
+}
+
+
 export default { 
   getAll,
-  setToken
+  setToken,
+  createBlog
 }
