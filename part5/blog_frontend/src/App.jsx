@@ -95,6 +95,8 @@ function App() {
       </div>
     )
 
+  const displayedBlogs = blogs.sort((a,b) => b.likes - a.likes)
+
   // --- render main ---
   return (
     <div>
@@ -113,7 +115,7 @@ function App() {
       </Togglable>
       
       <h2>Blogs List</h2>
-      {blogs.map(blog =>
+      {displayedBlogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
     
