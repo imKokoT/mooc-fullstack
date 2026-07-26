@@ -3,8 +3,8 @@ import BlogService from '../services/blogs'
 import AppContext from '../contexts/AppContext'
 
 
-function NewBlogForm({ blogs, setBlogs }) {
-  const { setNotification } = useContext(AppContext)
+function NewBlogForm({ ref }) {
+  const { blogs, setBlogs, setNotification } = useContext(AppContext)
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
 
@@ -35,6 +35,8 @@ function NewBlogForm({ blogs, setBlogs }) {
     // cleanup
     setTitle('')
     setUrl('')
+    if (ref)
+      ref.current.toggleVisibility(false)
 
     setNotification({
       message: 'Created new Blog successfully!',
@@ -50,23 +52,27 @@ function NewBlogForm({ blogs, setBlogs }) {
     setUrl(event.target.value)
 
   return (
-    <form onSubmit={addNewBlog}>
-      <label>
-        Title:
-        <input type="text" onChange={handleTitleChange} value={title}/>
-      </label> 
-      
-      <br />
-      
-      <label>
-        Url:
-        <input type="text" onChange={handleUrlChange} value={url}/> 
-      </label>
+    <div>
+      <h2>Create new Blog</h2>
 
-      <br />
+      <form onSubmit={addNewBlog}>
+        <label>
+          Title:
+          <input type="text" onChange={handleTitleChange} value={title}/>
+        </label> 
+        
+        <br />
+        
+        <label>
+          Url:
+          <input type="text" onChange={handleUrlChange} value={url}/> 
+        </label>
 
-      <button className='button' type="submit">Crete</button>
-    </form>
+        <br />
+
+        <button className='button' type="submit">Create</button>
+      </form>
+    </div>
   )
 }
 

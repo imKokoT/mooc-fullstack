@@ -1,7 +1,8 @@
 import { 
   useState,
   useEffect,
-  useContext
+  useContext,
+  useRef
 } from 'react'
 import AppContext from './contexts/AppContext'
 import BlogService from './services/blogs'
@@ -10,6 +11,7 @@ import NewBlogForm from './components/NewBlogForm'
 import Login from './components/Login'
 import LoginContext from './contexts/LoginContext'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 
 function TopBar() {
@@ -33,6 +35,7 @@ function App() {
   const [user, setUser] = useState(null)
   const [blogs, setBlogs] = useState([])
   const [notification, setNotification] = useState(null)
+  const blogFormRef = useRef(null)
 
   // --- fetch blogs ---
   useEffect(() => {
@@ -99,8 +102,9 @@ function App() {
 
       <Notification />
 
-      <h2>Create New Blog</h2>
-      <NewBlogForm blogs={blogs} setBlogs={setBlogs} />
+      <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
+        <NewBlogForm ref={blogFormRef} />
+      </Togglable>
       
       <h2>Blogs List</h2>
       {blogs.map(blog =>
