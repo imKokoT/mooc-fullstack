@@ -6,6 +6,7 @@ import {
 } from 'react'
 import AppContext from './contexts/AppContext'
 import BlogService from './services/blogs'
+import UsersService from './services/users'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Login from './components/Login'
@@ -36,6 +37,11 @@ function App() {
   const [blogs, setBlogs] = useState([])
   const [notification, setNotification] = useState(null)
   const blogFormRef = useRef(null)
+
+  // --- cache users ---
+  useEffect(() => {
+    UsersService.getAll()
+  })
 
   // --- fetch blogs ---
   useEffect(() => {

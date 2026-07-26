@@ -28,10 +28,19 @@ function updateBlog(blog) {
   return request.then(res => res.data)
 }
 
+function deleteBlog(blog) {
+  const request = axios.delete(`${baseUrl}/${blog.id}`, {
+    headers: {
+      Authorization: _token
+    }})
+  return request.then(res => res.data)
+}
+
 
 export default { 
   getAll,
   setToken,
   createBlog,
-  updateBlog
+  updateBlog,
+  deleteBlog
 }

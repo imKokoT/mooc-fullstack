@@ -1,10 +1,13 @@
 import { useContext, useState } from 'react'
 import AppContext from '../contexts/AppContext'
 import BlogService from '../services/blogs'
+import UserService from '../services/users'
 import './Blog.css'
+import LoginContext from '../contexts/LoginContext'
 
 function Blog({ blog }) {
   const { setNotification, setBlogs, blogs } = useContext(AppContext)
+  const { user } = useContext(LoginContext)
   const [showDetails, setShowDetails] = useState(false)
   
   const hideWhenVisible = { display: showDetails ? 'none' : '' }
@@ -38,6 +41,37 @@ function Blog({ blog }) {
     }
   }
 
+  async function deleteBlog() {
+    if(!window.confirm(`A you sure to delete Blog ${blog.title} by ${blog.owner.username}?`))
+      return
+
+    function onSuccess() {
+      setBlogs(blogs.filter(b => 
+        b.id !== blog.id
+      ))
+      
+      setNotification({
+        message: 'Blog deleted successfully',
+        msgType: 'success',
+        timeout: 5
+      })
+      console.info('deleted blog',blog.id, 'successfully!')
+    }
+    
+    try {
+      await BlogService.deleteBlog(blog)
+
+      onSuccess()
+    } 
+    catch (error) {
+      setNotification({
+        message: 'Error ' + (error.response.data.error ? error.response.data.error : error.status),
+        msgType: 'error'
+      })
+      console.error('failed to delete blog:', error)
+    }
+  }
+
   return (
     <div className="blog">
       {/* shorten view */}
@@ -59,6 +93,11 @@ function Blog({ blog }) {
         <br />
         
         By {blog.owner.username} <br />
+        
+        {/* show button only if user is owner or admin */}
+        {(blog.owner.username === user.username || UserService.isAdmin(user.username)) && (
+          <button className='button' onClick={deleteBlog}>Delete</button>
+        )}
       </div>
     </div>  
   )
