@@ -20,9 +20,18 @@ function createBlog(blog) {
   return request.then(res => res.data)
 }
 
+function updateBlog(blog) {
+  const request = axios.put(`${baseUrl}/${blog.id}`, blog, {
+    headers: {
+      Authorization: _token
+    }})
+  return request.then(res => res.data)
+}
+
 
 export default { 
   getAll,
   setToken,
-  createBlog
+  createBlog,
+  updateBlog
 }

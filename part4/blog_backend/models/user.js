@@ -17,6 +17,8 @@ const UserSchema = mongoose.Schema({
       ref: 'Blog'
     }
   ],
+
+  // TODO: list of liked blogs by a user to prevent boosting
   
   created: {
     type: Date,
