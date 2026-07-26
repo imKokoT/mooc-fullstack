@@ -41,7 +41,7 @@ function App() {
   // --- cache users ---
   useEffect(() => {
     UsersService.getAll()
-  })
+  }, [])
 
   // --- fetch blogs ---
   useEffect(() => {

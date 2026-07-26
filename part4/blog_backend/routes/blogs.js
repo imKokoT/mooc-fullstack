@@ -113,4 +113,19 @@ router.put('/:id', requireLogin, async (req, res) => {
   res.status(200).json(blog)
 })
 
+// TODO: record who liked
+router.put('/:id/like', requireLogin, async (req, res) => {
+  const id = req.params.id
+  // const username =  req.body.by
+
+  const blog = await Blog.findById(id)
+  if (!blog)
+    return res.status(404).end()
+
+  blog.likes++
+
+  await blog.save()
+  res.status(200).json(blog)
+})
+
 module.exports = router
