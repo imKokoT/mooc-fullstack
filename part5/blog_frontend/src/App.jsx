@@ -34,6 +34,7 @@ function App() {
   const [blogs, setBlogs] = useState([])
   const [notification, setNotification] = useState(null)
 
+  // --- fetch blogs ---
   useEffect(() => {
     BlogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -48,6 +49,7 @@ function App() {
     })
   }, [])
   
+  // --- try to load token ---
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('user')
     
@@ -60,7 +62,7 @@ function App() {
       // 
       // i found simple solution by using setTimeout but this 
       // does not look as right way to solve this problem
-      setTimeout(() => setUser(user), 300)
+      setTimeout(() => setUser(user), 0)
       
       BlogService.setToken(user.token)
       
@@ -68,6 +70,7 @@ function App() {
     }
   }, [])
 
+  // --- force login if no user ---
   if (!user)
     return (
       <div>
@@ -83,6 +86,7 @@ function App() {
       </div>
     )
 
+  // --- render main ---
   return (
     <div>
     <AppContext.Provider value={{

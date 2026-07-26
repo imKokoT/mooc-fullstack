@@ -50,7 +50,7 @@ function Login() {
     setNotification({
       message: 'success login!',
       msgType: 'success',
-      timeout: 3
+      timeout: 5
     })
     console.log('login success of user ', username)
   }
