@@ -37,12 +37,8 @@ function deleteBlog(blog) {
 }
   
 
-function likeBlog(blog, username) {
-  const data = {
-    by: username
-  }
-
-  const request = axios.put(`${baseUrl}/${blog.id}/like`, data, {
+function likeBlog(blog) {
+  const request = axios.put(`${baseUrl}/${blog.id}/like`, null, {
     headers: {
       Authorization: _token
   }})

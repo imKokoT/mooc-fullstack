@@ -24,7 +24,7 @@ function Blog({ blog }) {
     }
 
     try {
-      await BlogService.likeBlog(newBlog, user.username)
+      await BlogService.likeBlog(newBlog)
 
       setBlogs(blogs.map(b => 
         b.id === newBlog.id ? newBlog : b

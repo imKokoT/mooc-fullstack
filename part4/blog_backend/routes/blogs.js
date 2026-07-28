@@ -116,7 +116,6 @@ router.put('/:id', requireLogin, async (req, res) => {
 // TODO: record who liked
 router.put('/:id/like', requireLogin, async (req, res) => {
   const id = req.params.id
-  // const username =  req.body.by
 
   const blog = await Blog.findById(id)
   if (!blog)
