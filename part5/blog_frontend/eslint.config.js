@@ -24,4 +24,12 @@ export default defineConfig([
       'eqeqeq': 'error'
     }
   },
+  {
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest
+      }
+    }
+  }
 ])
