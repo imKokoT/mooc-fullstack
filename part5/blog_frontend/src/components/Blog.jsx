@@ -42,7 +42,7 @@ function Blog({ blog }) {
   }
 
   async function deleteBlog() {
-    if(!window.confirm(`A you sure to delete Blog ${blog.title} by ${blog.owner.username}?`))
+    if(!window.confirm(`Are you sure to delete Blog ${blog.title} by ${blog.owner.username}?`))
       return
 
     function onSuccess() {
@@ -75,13 +75,13 @@ function Blog({ blog }) {
   return (
     <div className="blog">
       {/* shorten view */}
-      <div style={hideWhenVisible}>
+      <div style={hideWhenVisible} className='view-default'>
         {blog.title} By {blog.owner.username}
         <button className='button' onClick={switchDetails}>View</button>
       </div>
 
       {/* expanded view */}
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='view-details'>
         {blog.title} 
         <button className='button' onClick={switchDetails}>Hide</button>
         <br />
