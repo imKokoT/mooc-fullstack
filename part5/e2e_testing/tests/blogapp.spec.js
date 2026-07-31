@@ -93,8 +93,11 @@ describe('Blog app', () => {
         await url.fill(content.url)
         await confirm.click()
 
+        const blog = page.getByText(`${content.title} By`)
         await expect(page.locator('.success')).toContainText(/created new blog/i)
-        await expect(page.getByText(`${content.title} By`)).toBeVisible()
+        await expect(blog).toBeVisible()
+        
+        return blog
       }
       
       beforeEach(async ({ page }) => {
@@ -119,6 +122,24 @@ describe('Blog app', () => {
 
         // check like was increased by 1
         await expect(blog).toHaveText(/likes: 1/i)
+      })
+
+      test('delete a blog', async ({page}) => {
+        // setup confirm listener
+        page.once('dialog', dialog => dialog.accept())
+
+        // create and expand view
+        let blog = await createNewBlog(page, {
+          title: 'to be deleted', url: 'https://example.com'
+        })
+        blog = await blog.locator('..')
+        await blog.getByRole('button', {name: /view/i}).click()
+
+        // press delete and confirm
+        await blog.getByRole('button', {name: /delete/i}).click()
+        
+        // check
+        await expect(blog).toHaveCount(0)
       })
     })
   })
