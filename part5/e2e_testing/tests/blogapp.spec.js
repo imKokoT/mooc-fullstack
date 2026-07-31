@@ -124,6 +124,18 @@ describe('Blog app', () => {
         await expect(blog).toHaveText(/likes: 1/i)
       })
 
+      test('only owner see delete button', async ({page}) => {
+        // for owned is shown
+        const ownedBlog = await page.getByText('first').locator('..')
+        await ownedBlog.getByRole('button', {name: /view/i}).click()
+        await expect(ownedBlog.getByRole('button', {name: /delete/i})).toBeVisible()
+
+        // for other not
+        const anotherBlog = await page.getByText('another').locator('..')
+        await anotherBlog.getByRole('button', {name: /view/i}).click()
+        await expect(anotherBlog.getByRole('button', {name: /delete/i})).toBeHidden()
+      })
+
       test('delete a blog', async ({page}) => {
         // setup confirm listener
         page.once('dialog', dialog => dialog.accept())
