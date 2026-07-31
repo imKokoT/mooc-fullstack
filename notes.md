@@ -347,3 +347,29 @@ npx playwright test --debug
 # Auto generate tests with Codegen.
 npx playwright codegen
 ```
+
+We can now define the baseUrl for the application in the tests configuration file playwright.config.js:
+
+```js
+export default defineConfig({
+  // ...
+  use: {
+    baseURL: 'http://localhost:5173',
+    // ...
+  },
+  // ...
+})
+```
+
+Another good idea to specify npm scripts:
+
+```js
+{
+  // ...
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  // ...
+}
+```
