@@ -74,9 +74,52 @@ describe('Blog app', () => {
       await url.fill('https://example.com')
       await confirm.click()
 
-      await page.pause()
       await expect(page.locator('.success')).toContainText(/created new blog/i)
       await expect(page.getByText(/title by user/i)).toBeVisible()
+    })
+
+    describe('Blogs manipulations', () => {
+      async function createNewBlog(page, content) {
+        // open form
+        await page.getByRole('button', {name: /create new blog/i}).click()
+
+        // get elements
+        const title = await page.getByLabel(/title/i)
+        const url = await page.getByLabel(/url/i)
+        const confirm = await page.getByRole('button', {name: /create/i})
+
+        // check that blog was created
+        await title.fill(content.title)
+        await url.fill(content.url)
+        await confirm.click()
+
+        await expect(page.locator('.success')).toContainText(/created new blog/i)
+        await expect(page.getByText(`${content.title} By`)).toBeVisible()
+      }
+      
+      beforeEach(async ({ page }) => {
+        await createNewBlog(page, {
+          title: 'first', url: 'https://example.com'
+        })
+        await createNewBlog(page, {
+          title: 'second', url: 'https://example.com'
+        })
+        await createNewBlog(page, {
+          title: 'third', url: 'https://example.com'
+        })
+      })
+
+      test('a blog could be liked', async ({page}) => {
+        // expand view
+        const blog = await page.getByText('second').locator('..')
+        await blog.getByRole('button', {name: /view/i}).click()
+
+        // like post
+        await blog.getByRole('button', {name: /like/i}).click()
+
+        // check like was increased by 1
+        await expect(blog).toHaveText(/likes: 1/i)
+      })
     })
   })
 })
