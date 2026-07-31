@@ -4,14 +4,16 @@ const logger = require('../utils/logger')
 const requireLogin = require('../utils/middleware/requireLogin')
 const mongoose = require('mongoose')
 
+const populateUserFilter = {
+  username: 1,
+  created: 1,
+  last_login: 1
+}
+
 
 router.get('/', async (req, res) => {
   const blogs = await Blog.find({})
-    .populate('owner', {
-      username: 1,
-      created: 1,
-      last_login: 1
-    })
+    .populate('owner', populateUserFilter)
   res.json(blogs)
 })
 
@@ -21,7 +23,6 @@ router.post('/', requireLogin, async (req, res) => {
     owner: req.user.id
   })
   
-  blog.author = req.user.username
   req.user.blogs.push(blog.id)
 
   /*
@@ -48,6 +49,9 @@ router.post('/', requireLogin, async (req, res) => {
     await blog.save()
     await req.user.save()
   })
+
+  // im to lazy to fix logic, so there is additional query to DB
+  await blog.populate('owner', populateUserFilter)
   
   logger.info('ADDED Blog ID', blog.id)
   res.status(201).json(blog)
@@ -57,11 +61,7 @@ router.get('/:id', async (req, res) => {
   const id = req.params.id
 
   const blog = await Blog.findById(id)
-    .populate('owner', {
-      username: 1,
-      created: 1,
-      last_login: 1
-    })
+    .populate('owner', populateUserFilter)
   if (!blog)
     return res.status(404).end()
 

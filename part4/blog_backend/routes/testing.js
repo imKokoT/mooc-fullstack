@@ -9,7 +9,7 @@ router.post('/reset', async (req, res) => {
   await User.deleteMany({})
 
   logger.info('reset testing database')
-  res.statusCode(204)
+  res.sendStatus(204)
 })
 
 module.exports = router
