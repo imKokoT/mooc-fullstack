@@ -314,3 +314,36 @@ npm test -- --test-only
 
 > [!IMPORTANT]
 > Do not forget to remove them after tests development
+
+## E2E testing with Playwright
+
+Init separate project
+
+```sh
+cd path/to/proj
+npm init playwright@latest
+```
+
+Playwright requires separate deps for browsers, but problematic browsers could be ignored by removing entries in *playwright.config.js* or just run test for specific browser by specifying `--project=...` key
+
+Then to run  tests:
+
+```sh
+# Runs the end-to-end tests.
+npx playwright test
+
+# Starts the interactive UI mode.
+npx playwright test --ui
+
+# Runs the tests only on Desktop Chrome.
+npx playwright test --project=chromium
+
+# Runs the tests in a specific file.
+npx playwright test example
+
+# Runs the tests in debug mode.
+npx playwright test --debug
+
+# Auto generate tests with Codegen.
+npx playwright codegen
+```
