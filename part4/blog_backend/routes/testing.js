@@ -28,4 +28,14 @@ router.post('/reset', async (req, res) => {
   res.sendStatus(204)
 })
 
+router.post('/reset-list', async (req, res) => {
+  await Blog.deleteMany({
+    title: {
+      $in: req.body
+    }})
+
+  logger.info('deleted list of blogs:', req.body)
+  res.sendStatus(204)
+})
+
 module.exports = router

@@ -1,4 +1,4 @@
-const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { test, expect, beforeEach, describe, beforeAll } = require('@playwright/test')
 const { exec } = require('node:child_process')
 
 
@@ -99,8 +99,16 @@ describe('Blog app', () => {
         
         return blog
       }
+
+      async function likeBlog(page, title) {
+        /// ...
+      }
       
-      beforeEach(async ({ page }) => {
+      beforeEach(async ({ page, request }) => {
+        await request.post('/api/testing/reset-list', {data:[
+          'first', 'second', 'third'
+        ]})
+
         await createNewBlog(page, {
           title: 'first', url: 'https://example.com'
         })
@@ -152,6 +160,20 @@ describe('Blog app', () => {
         
         // check
         await expect(blog).toHaveCount(0)
+      })
+
+      test('test blogs ordering', async ({page}) => {
+        // take only title
+        const items = await (await page.locator('.blog').allTextContents()).map(item =>
+          item.split(' ', 1)[0]
+        )
+
+        expect(items).toEqual([
+          'second',
+          'title',
+          'first',
+          'third'
+        ])
       })
     })
   })
