@@ -101,7 +101,15 @@ describe('Blog app', () => {
       }
 
       async function likeBlog(page, title) {
-        /// ...
+        // expand view
+        const blog = await page.getByText(title).locator('..')
+        const viewButton = blog.getByRole('button', { name: /view/i })
+
+        if (await viewButton.count())
+          await viewButton.click()
+
+        // like post
+        await blog.getByRole('button', {name: /like/i}).click()
       }
       
       beforeEach(async ({ page, request }) => {
@@ -162,7 +170,22 @@ describe('Blog app', () => {
         await expect(blog).toHaveCount(0)
       })
 
-      test('test blogs ordering', async ({page}) => {
+      test('test blogs ordering', async ({page}) => {    
+        // like blogs
+        await likeBlog(page, 'second')
+        await likeBlog(page, 'second')
+        await likeBlog(page, 'second')
+        await likeBlog(page, 'second')
+        
+        await likeBlog(page, 'another')
+        await likeBlog(page, 'another')
+        await likeBlog(page, 'another')
+        
+        await likeBlog(page, 'third')
+        await likeBlog(page, 'third')
+        
+        await page.waitForTimeout(1000)
+        
         // take only title
         const items = await (await page.locator('.blog').allTextContents()).map(item =>
           item.split(' ', 1)[0]
@@ -170,9 +193,9 @@ describe('Blog app', () => {
 
         expect(items).toEqual([
           'second',
-          'title',
+          'another',
+          'third',
           'first',
-          'third'
         ])
       })
     })
