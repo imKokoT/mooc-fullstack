@@ -3,9 +3,11 @@ import LoginContext from '../contexts/LoginContext'
 import BlogService from '../services/blogs'
 import LoginService from '../services/login'
 import AppContext from '../contexts/AppContext'
+import { useNavigate } from 'react-router-dom'
 
 
 function Login() {
+  const navigate = useNavigate()
   const { setUser } = useContext(LoginContext)
   const { setNotification } = useContext(AppContext)
   const [username, setUsername] = useState('')
@@ -53,6 +55,7 @@ function Login() {
       timeout: 5
     })
     console.log('login success of user ', username)
+    navigate('/')
   }
 
   return (

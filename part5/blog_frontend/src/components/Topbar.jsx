@@ -24,10 +24,14 @@ function TopBar() {
       {
         user ?
           // if logged in 
-          <div>
-            User {user.username}
-            <button onClick={handleLogout}>Logout</button>
-          </div> 
+          <>  
+            <div>
+              User {user.username}
+            </div>
+            <div>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          </>
           : // if not
           <div>
             <Link to="/login">login</Link>

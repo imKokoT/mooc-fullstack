@@ -1,12 +1,14 @@
 import { useState, useContext } from 'react'
 import BlogService from '../services/blogs'
 import AppContext from '../contexts/AppContext'
+import { useNavigate } from 'react-router-dom'
 
 
 function NewBlogForm({ ref }) {
   const { blogs, setBlogs, setNotification } = useContext(AppContext)
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
+  const navigate = useNavigate()
 
   async function addNewBlog(event) {
     event.preventDefault()
@@ -44,6 +46,7 @@ function NewBlogForm({ ref }) {
       timeout: 5
     })
     console.log('added new blog', data)
+    navigate('/')
   }
 
   const handleTitleChange = event => 
