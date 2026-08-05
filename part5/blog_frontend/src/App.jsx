@@ -14,37 +14,8 @@ import LoginContext from './contexts/LoginContext'
 import Notification from './components/Notification'
 import './App.css'
 import Home from './components/Home'
+import TopBar from './components/Topbar'
 
-
-function TopBar() {
-  const {user, setUser} = useContext(LoginContext)
-
-  function handleLogout() {
-    window.localStorage.removeItem('user')
-    setUser(null)
-    console.log('user logout')
-  } 
-
-  return (
-    <div className='topbar'>
-      <Link to="/">blogs</Link>
-      <Link to="/create">new blog</Link>
-      {
-        user ?
-          // if logged in 
-          <div>
-            User {user.username}
-            <button onClick={handleLogout}>Logout</button>
-          </div> 
-          : // if not
-          <div>
-            <Link to="/login">login</Link>
-            {/* TODO: /signup */}
-          </div>
-      }
-    </div>
-  )
-}
 
 function App() {
   const [user, setUser] = useState(null)
