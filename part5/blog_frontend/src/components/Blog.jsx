@@ -89,15 +89,21 @@ function Blog({ blog }) {
         {blog.url} <br /> 
 
         likes: {blog.likes}
-        <button className='button' onClick={likeBlog}>like</button>
+        {user ?
+          <button className='button' onClick={likeBlog}>like</button>
+          : null
+        }
         <br />
         
         By {blog.owner.username} <br />
         
         {/* show button only if user is owner or admin */}
-        {(blog.owner.username === user.username || UserService.isAdmin(user.username)) && (
-          <button className='button' onClick={deleteBlog}>Delete</button>
-        )}
+        {user ? 
+          (blog.owner.username === user.username || UserService.isAdmin(user.username)) && (
+            <button className='button' onClick={deleteBlog}>Delete</button>
+          ) 
+          : null
+        }
       </div>
     </div>  
   )

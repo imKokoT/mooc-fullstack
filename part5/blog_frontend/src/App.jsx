@@ -1,9 +1,9 @@
 import { 
-  useState,
-  useEffect,
-  useContext,
-  useRef
+  useState, useEffect, useContext
 } from 'react'
+import {
+  Routes, Route, Link, useMatch
+} from 'react-router-dom'
 import AppContext from './contexts/AppContext'
 import BlogService from './services/blogs'
 import UsersService from './services/users'
@@ -12,7 +12,8 @@ import NewBlogForm from './components/NewBlogForm'
 import Login from './components/Login'
 import LoginContext from './contexts/LoginContext'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
+import './App.css'
+import Home from './components/Home'
 
 
 function TopBar() {
@@ -25,9 +26,22 @@ function TopBar() {
   } 
 
   return (
-    <div>
-      <div>User {user.username}</div>
-      <button onClick={handleLogout}>Logout</button>
+    <div className='topbar'>
+      <Link to="/">blogs</Link>
+      <Link to="/create">new blog</Link>
+      {
+        user ?
+          // if logged in 
+          <div>
+            User {user.username}
+            <button onClick={handleLogout}>Logout</button>
+          </div> 
+          : // if not
+          <div>
+            <Link to="/login">login</Link>
+            {/* TODO: /signup */}
+          </div>
+      }
     </div>
   )
 }
@@ -36,7 +50,6 @@ function App() {
   const [user, setUser] = useState(null)
   const [blogs, setBlogs] = useState([])
   const [notification, setNotification] = useState(null)
-  const blogFormRef = useRef(null)
 
   // --- cache users ---
   useEffect(() => {
@@ -79,24 +92,6 @@ function App() {
     }
   }, [])
 
-  // --- force login if no user ---
-  if (!user)
-    return (
-      <div>
-      <AppContext.Provider value={{setNotification, notification}}>
-      <LoginContext.Provider value={{user, setUser}}>
-
-        <Notification />
-
-        <Login />
-     
-      </LoginContext.Provider>
-      </AppContext.Provider>
-      </div>
-    )
-
-  const displayedBlogs = blogs.sort((a,b) => b.likes - a.likes)
-
   // --- render main ---
   return (
     <div>
@@ -110,14 +105,18 @@ function App() {
 
       <Notification />
 
-      <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
-        <NewBlogForm ref={blogFormRef} />
-      </Togglable>
-      
-      <h2>Blogs List</h2>
-      {displayedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <Routes>
+        <Route path="/blogs/:id" element={
+          null
+        } />
+        <Route path="/create" element={
+          <NewBlogForm />
+        } />
+        <Route path="/login" element={
+          <Login />
+        } />
+        <Route path="/" element={<Home />} />
+      </Routes>
     
     </LoginContext.Provider>
     </AppContext.Provider>
