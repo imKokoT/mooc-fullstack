@@ -14,14 +14,16 @@ describe('Blog app', () => {
     await page.goto('/')
   })
 
-  test('Login form is shown', async ({ page }) => {
-    await expect(page.getByLabel(/username/i)).toBeVisible()
-    await expect(page.getByLabel(/password/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /login/i })).toBeVisible()
+  test('Topbar is visible', async ({ page }) => {
+    await expect(page.getByRole('link', {name: /blogs/i})).toBeVisible()
+    await expect(page.getByRole('link', {name: /login/i})).toBeVisible()
+    await expect(page.getByRole('link', {name: /new blog/i})).not.toBeVisible()
   })
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
+      await page.getByRole('link', {name: /login/i}).click()
+
       await page.getByLabel(/username/i).fill('user')
       await page.getByLabel(/password/i).fill('password')
       await page.getByRole('button', { name: /login/i }).click()
@@ -30,6 +32,8 @@ describe('Blog app', () => {
     })
 
     test('fails with wrong credentials', async ({ page }) => {
+      await page.getByRole('link', {name: /login/i}).click()
+
       await page.getByLabel(/username/i).fill('user')
       await page.getByLabel(/password/i).fill('wrong-password')
       await page.getByRole('button', { name: /login/i }).click()
@@ -47,7 +51,7 @@ describe('Blog app', () => {
       await request.post('/api/testing/reset')
       await request.post('/api/signup', {data: user})
       
-      await page.goto('/')
+      await page.goto('/login')
       
       await page.getByLabel(/username/i).fill('user')
       await page.getByLabel(/password/i).fill('password')
@@ -57,7 +61,7 @@ describe('Blog app', () => {
 
     test('a new blog can be created', async ({ page }) => {
       // open form
-      await page.getByRole('button', {name: /create new blog/i}).click()
+      await page.getByRole('link', {name: /new blog/i}).click()
 
       // get elements
       const title = await page.getByLabel(/title/i)
@@ -69,13 +73,14 @@ describe('Blog app', () => {
       await expect(url).toBeVisible()
       await expect(confirm).toBeVisible()
 
-      // check that blog was created
+      // create
       await title.fill('title')
       await url.fill('https://example.com')
       await confirm.click()
-
+      
+      // check that blog was created
       await expect(page.locator('.success')).toContainText(/created new blog/i)
-      await expect(page.getByText(/title by user/i)).toBeVisible()
+      await expect(page.getByText(/title/).locator('..')).toContainClass('blog')
     })
 
     describe('Blogs manipulations', () => {
