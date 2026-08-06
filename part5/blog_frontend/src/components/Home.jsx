@@ -13,7 +13,7 @@ function Home() {
       <h2>Blogs List</h2>
       <ul>
         {displayedBlogs.map(blog =>
-          <li><Link key={blog.id} to={`/blogs/${blog.id}`}>
+          <li key={blog.id}><Link to={`/blogs/${blog.id}`}>
             {`${blog.title} By ${blog.owner.username}`}
           </Link></li>
         )}
