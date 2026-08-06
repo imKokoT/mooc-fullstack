@@ -1,5 +1,6 @@
 const { test, expect, beforeEach, describe, beforeAll } = require('@playwright/test')
 const { exec } = require('node:child_process')
+const { title } = require('node:process')
 
 
 describe('Blog app', () => {
@@ -84,37 +85,15 @@ describe('Blog app', () => {
     })
 
     describe('Blogs manipulations', () => {
-      async function createNewBlog(page, content) {
-        // open form
-        await page.getByRole('button', {name: /create new blog/i}).click()
-
-        // get elements
-        const title = await page.getByLabel(/title/i)
-        const url = await page.getByLabel(/url/i)
-        const confirm = await page.getByRole('button', {name: /create/i})
-
-        // check that blog was created
-        await title.fill(content.title)
-        await url.fill(content.url)
-        await confirm.click()
-
-        const blog = page.getByText(`${content.title} By`)
-        await expect(page.locator('.success')).toContainText(/created new blog/i)
-        await expect(blog).toBeVisible()
-        
-        return blog
-      }
-
       async function likeBlog(page, title) {
-        // expand view
+        // go to blog
+        await page.getByRole('link', {name: title}).click()
         const blog = await page.getByText(title).locator('..')
-        const viewButton = blog.getByRole('button', { name: /view/i })
-
-        if (await viewButton.count())
-          await viewButton.click()
 
         // like post
         await blog.getByRole('button', {name: /like/i}).click()
+
+        await page.getByRole('link', {name: /blogs/i}).click()
       }
       
       beforeEach(async ({ page, request }) => {
@@ -122,21 +101,27 @@ describe('Blog app', () => {
           'first', 'second', 'third'
         ]})
 
-        await createNewBlog(page, {
-          title: 'first', url: 'https://example.com'
-        })
-        await createNewBlog(page, {
-          title: 'second', url: 'https://example.com'
-        })
-        await createNewBlog(page, {
-          title: 'third', url: 'https://example.com'
-        })
+        await request.post('/api/testing/add-blog', {data: {
+          title: 'first',
+          username: 'user'
+        }})
+        await request.post('/api/testing/add-blog', {data: {
+          title: 'second',
+          username: 'user'
+        }})
+        await request.post('/api/testing/add-blog', {data: {
+          title: 'third',
+          username: 'user'
+        }})
+
+        await page.goto('/')
+        await expect(page.getByRole('link', {name: /third/})).toBeVisible()
       })
 
       test('a blog could be liked', async ({page}) => {
-        // expand view
+        // go to blog
+        await page.getByRole('link', {name: 'second'}).click()
         const blog = await page.getByText('second').locator('..')
-        await blog.getByRole('button', {name: /view/i}).click()
 
         // like post
         await blog.getByRole('button', {name: /like/i}).click()
@@ -147,32 +132,36 @@ describe('Blog app', () => {
 
       test('only owner see delete button', async ({page}) => {
         // for owned is shown
-        const ownedBlog = await page.getByText('first').locator('..')
-        await ownedBlog.getByRole('button', {name: /view/i}).click()
+        await page.getByRole('link', {name: /first/}).click()
+        const ownedBlog = await page.getByText(/first/).locator('..')
         await expect(ownedBlog.getByRole('button', {name: /delete/i})).toBeVisible()
+    
+        // return
+        await page.getByRole('link', {name: /blogs/i}).click()
 
         // for other not
+        await page.getByRole('link', {name: /another/}).click()
         const anotherBlog = await page.getByText('another').locator('..')
-        await anotherBlog.getByRole('button', {name: /view/i}).click()
         await expect(anotherBlog.getByRole('button', {name: /delete/i})).toBeHidden()
       })
 
-      test('delete a blog', async ({page}) => {
+      test('delete a blog', async ({page, request}) => {
         // setup confirm listener
         page.once('dialog', dialog => dialog.accept())
 
-        // create and expand view
-        let blog = await createNewBlog(page, {
-          title: 'to be deleted', url: 'https://example.com'
-        })
-        blog = await blog.locator('..')
-        await blog.getByRole('button', {name: /view/i}).click()
+        // create and go to blog
+        await request.post('/api/testing/add-blog', {data:{
+          title: 'to be deleted', username: 'user'
+        }})
+        await page.goto('/')
+        await page.getByRole('link', {name: /to be deleted/}).click()
+        const blog = await page.getByText(/to be deleted/)
 
         // press delete and confirm
         await blog.getByRole('button', {name: /delete/i}).click()
         
         // check
-        await expect(blog).toHaveCount(0)
+        await expect(await page.getByText(/to be deleted/)).toHaveCount(0)
       })
 
       test('test blogs ordering', async ({page}) => {    
@@ -192,7 +181,7 @@ describe('Blog app', () => {
         await page.waitForTimeout(1000)
         
         // take only title
-        const items = await (await page.locator('.blog').allTextContents()).map(item =>
+        const items = await (await page.locator('li').allTextContents()).map(item =>
           item.split(' ', 1)[0]
         )
 

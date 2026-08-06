@@ -47,7 +47,7 @@ router.post('/reset-list', async (req, res) => {
 
 router.post('/add-blog', async (req, res) => {
   await addBlog(req.body.title, req.body.username)
-  res.sendStatus(200)
+  res.sendStatus(201)
 })
 
 module.exports = router
