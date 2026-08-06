@@ -20,11 +20,11 @@ function TopBar() {
   return (
     <div className='topbar'>
       <Link to="/">blogs</Link>
-      <Link to="/create">new blog</Link>
       {
         user ?
-          // if logged in 
-          <>  
+        // if logged in 
+        <>  
+            <Link to="/create">new blog</Link>
             <div>
               User {user.username}
             </div>
