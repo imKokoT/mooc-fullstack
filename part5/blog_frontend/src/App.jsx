@@ -1,8 +1,8 @@
 import { 
-  useState, useEffect, useContext
+  useState, useEffect
 } from 'react'
 import {
-  Routes, Route, Link, useMatch
+  Routes, Route, useMatch
 } from 'react-router-dom'
 import AppContext from './contexts/AppContext'
 import BlogService from './services/blogs'
@@ -63,6 +63,12 @@ function App() {
     }
   }, [])
 
+  // --- find blog for route ---
+  const match = useMatch('/blogs/:id')
+  const blog = match
+    ? blogs.find(note => note.id === match.params.id)
+    : null
+
   // --- render main ---
   return (
     <div>
@@ -78,7 +84,7 @@ function App() {
 
       <Routes>
         <Route path="/blogs/:id" element={
-          null
+          <Blog blog={blog} />
         } />
         <Route path="/create" element={
           <NewBlogForm />

@@ -23,7 +23,7 @@ function TopBar() {
       {
         user ?
         // if logged in 
-        <>  
+          <>  
             <Link to="/create">new blog</Link>
             <div>
               User {user.username}

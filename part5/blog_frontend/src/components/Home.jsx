@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import AppContext from "../contexts/AppContext"
-import Blog from "../components/Blog"
+import { Link } from "react-router-dom"
 
 
 function Home() {
@@ -11,9 +11,13 @@ function Home() {
   return (
     <div>
       <h2>Blogs List</h2>
-      {displayedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <ul>
+        {displayedBlogs.map(blog =>
+          <li><Link key={blog.id} to={`/blogs/${blog.id}`}>
+            {`${blog.title} By ${blog.owner.username}`}
+          </Link></li>
+        )}
+      </ul>
     </div>
   )
 }

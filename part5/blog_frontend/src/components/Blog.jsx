@@ -1,21 +1,18 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import AppContext from '../contexts/AppContext'
 import BlogService from '../services/blogs'
 import UserService from '../services/users'
 import './Blog.css'
 import LoginContext from '../contexts/LoginContext'
+import { useNavigate } from 'react-router-dom'
 
 function Blog({ blog }) {
   const { setNotification, setBlogs, blogs } = useContext(AppContext)
   const { user } = useContext(LoginContext)
-  const [showDetails, setShowDetails] = useState(false)
-  
-  const hideWhenVisible = { display: showDetails ? 'none' : '' }
-  const showWhenVisible = { display: showDetails ? '' : 'none' }
+  const navigate = useNavigate()
 
-  function switchDetails() {
-    setShowDetails(!showDetails)
-  }
+  if (!blog)
+    return
 
   async function likeBlog() {
     const newBlog = {
@@ -56,6 +53,7 @@ function Blog({ blog }) {
         timeout: 5
       })
       console.info('deleted blog',blog.id, 'successfully!')
+      navigate('/')
     }
     
     try {
@@ -74,16 +72,8 @@ function Blog({ blog }) {
 
   return (
     <div className="blog">
-      {/* shorten view */}
-      <div style={hideWhenVisible} className='view-default'>
-        {blog.title} By {blog.owner.username}
-        <button className='button' onClick={switchDetails}>View</button>
-      </div>
-
-      {/* expanded view */}
-      <div style={showWhenVisible} className='view-details'>
+      <div>
         {blog.title} 
-        <button className='button' onClick={switchDetails}>Hide</button>
         <br />
 
         {blog.url} <br /> 

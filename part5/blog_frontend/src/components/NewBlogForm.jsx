@@ -46,7 +46,11 @@ function NewBlogForm({ ref }) {
       timeout: 5
     })
     console.log('added new blog', data)
-    navigate('/')
+
+    // would be much better to forward user to new blog
+    // directly in order to prevent hiding under blogs 
+    // with higher likes
+    navigate(`/blogs/${data.id}`)
   }
 
   const handleTitleChange = event => 
