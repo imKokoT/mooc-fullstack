@@ -31,7 +31,7 @@ function Login() {
     }
     catch (error) {
       setNotification({
-        message: 'Error ' + (error.response.data.error ? error.response.data.error : error.status),
+        message: 'Error ' + (error.response ? error.response.data.error : error.status),
         msgType: 'error'
       })
       console.error('login failed:', error.response.data.error)

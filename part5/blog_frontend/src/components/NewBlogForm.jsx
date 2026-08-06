@@ -23,10 +23,10 @@ function NewBlogForm({ ref }) {
     }
     catch (error) {
       setNotification({
-        message: 'Error ' + (error.response.data.error ? error.response.data.error : error.status),
+        message: 'Error ' + (error.response ? error.response.data.error : error.status),
         msgType: 'error'
       })
-      console.error('failed create new blog:', error.response.data.error)
+      console.error('failed create new blog')
       return
     }
   }
