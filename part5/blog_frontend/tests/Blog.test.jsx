@@ -4,26 +4,34 @@ import Blog from '../src/components/Blog'
 import helper from './helper'
 import UserService from '../src/services/users'
 import BlogService from '../src/services/blogs'
+import { beforeEach, describe } from 'vitest'
 
-const mockBlogData = {
-  id: '1',
-  title: 'title',
-  url: 'https://example.com',
-  owner: {
-    username: 'user',
+const blogs = [
+  {
+    id: '1',
+    title: 'title',
+    url: 'https://example.com',
+    owner: {
+      username: 'user',
+    },
+    likes: 42,
   },
-  likes: 42,
-}
+  {
+    id: '2',
+    title: 'another',
+    url: 'https://example.com',
+    owner: {
+      username: 'other',
+    },
+    likes: 23,
+  }
+]
 
 describe('Blog', () => {
   // eslint-disable-next-line no-unused-vars
   UserService.isAdmin = username => false
   
   beforeEach(() => {
-    helper.renderWithProviders(
-      <Blog blog={{...mockBlogData}} />
-    )
-
     vi.mock('../src/services/blogs', () => ({
       default: {
         likeBlog: vi.fn().mockResolvedValue({}),
@@ -32,39 +40,81 @@ describe('Blog', () => {
     }))
   })
 
-  test('check default is shown', () => {
-    // default
-    expect(screen.queryByText('title By user')).toBeVisible()
+  describe('logged in + owner of the blog', () => {
+    beforeEach(() => {
+      vi.clearAllMocks()
 
-    const detailsButton = screen.getByRole('button', { name: /View/i })
-    expect(detailsButton).toBeVisible()
+      helper.renderWithProviders(
+        <Blog blog={{...blogs[0]}} />,
+        { username: 'user' }
+      )    
+    })
 
-    // details
-    expect(screen.queryByText(/https:\/\/example\.com/i)).not.toBeVisible()
-    expect(screen.queryByText(/likes: 42/i)).not.toBeVisible()
+    test('check visible elements', async () => {  
+      expect(screen.queryByText(/title/)).toBeVisible()
+      expect(screen.queryByText(/by user/i)).toBeVisible()
+      expect(screen.queryByText(/https:\/\/example\.com/i)).toBeVisible()
+      expect(screen.queryByText(/likes: 42/i)).toBeVisible()
+      expect(screen.queryByRole('button', {name: /like/i})).toBeInTheDocument()
+      expect(screen.queryByRole('button', {name: /delete/i})).toBeInTheDocument()
+    })
+  
+    test('click like button', async () => {
+      const user = userEvent.setup()
+  
+      const likeButton = screen.getByRole('button', { name: /like/ })
+      await user.click(likeButton)
+      
+      expect(BlogService.likeBlog).toHaveBeenCalledTimes(1)
+    })
   })
 
-  test('check details is shown', async () => {  
-    const user = userEvent.setup()
+  describe('logged in + not owner of the blog', () => {    
+    beforeEach(() => {
+      vi.clearAllMocks()
 
-    const detailsButton = screen.getByRole('button', { name: 'View' })
-    await user.click(detailsButton)
+      helper.renderWithProviders(
+        <Blog blog={{...blogs[1]}} />,
+        { username: 'user' }
+      )
+    })
 
-    expect(screen.queryByText(/https:\/\/example\.com/i)).toBeVisible()
-    expect(screen.queryByText(/likes: 42/i)).toBeVisible()
+    test('check visible elements', async () => {  
+      expect(screen.queryByText(/another/)).toBeVisible()
+      expect(screen.queryByText(/by other/i)).toBeVisible()
+      expect(screen.queryByText(/https:\/\/example\.com/i)).toBeVisible()
+      expect(screen.queryByText(/likes: 23/i)).toBeVisible()
+      expect(screen.queryByRole('button', {name: /like/i})).toBeInTheDocument()
+      expect(screen.queryByRole('button', {name: /delete/i})).not.toBeInTheDocument()
+    })
+  
+    test('click like button', async () => {
+      const user = userEvent.setup()
+  
+      const likeButton = screen.getByRole('button', { name: /like/ })
+      await user.click(likeButton)
+      
+      expect(BlogService.likeBlog).toHaveBeenCalledTimes(1)
+    })
   })
 
-  test('click like button twice', async () => {
-    const user = userEvent.setup()
+  describe('not logged in', () => {
+    beforeEach(() => {
+      vi.clearAllMocks()
 
-    await user.click(
-      screen.getByRole('button', { name: 'View' }))
+      helper.renderWithProviders(
+        <Blog blog={{...blogs[1]}} />,
+        null
+      )
+    })
 
-    const likeButton = screen.getByRole('button', { name: 'like' })
-
-    await user.click(likeButton)
-    await user.click(likeButton)
-
-    expect(BlogService.likeBlog).toHaveBeenCalledTimes(2)
+    test('check visible elements', async () => {  
+      expect(screen.queryByText(/another/)).toBeVisible()
+      expect(screen.queryByText(/by other/i)).toBeVisible()
+      expect(screen.queryByText(/https:\/\/example\.com/i)).toBeVisible()
+      expect(screen.queryByText(/likes: 23/i)).toBeVisible()
+      expect(screen.queryByRole('button', {name: /like/i})).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', {name: /delete/i})).not.toBeInTheDocument()
+    })
   })
 })
