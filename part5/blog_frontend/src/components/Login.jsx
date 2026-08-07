@@ -4,6 +4,7 @@ import BlogService from '../services/blogs'
 import LoginService from '../services/login'
 import AppContext from '../contexts/AppContext'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button } from '@mui/material'
 
 
 function Login() {
@@ -60,15 +61,19 @@ function Login() {
 
   return (
     <form onSubmit={handleLogin}>
-      <div>
-        <label htmlFor="username">Username:</label>
-        <input id="username" onChange={handleUsernameChange} value={username}/> <br />
+      <div style={{
+        marginBottom: 10
+      }}>
+        <TextField id="username" label='Username' variant='standard'
+          onChange={handleUsernameChange} value={username}/> 
+          
+        <br />
         
-        <label htmlFor="password">Password:</label>
-        <input id="password" type="password" onChange={handlePasswordChange} value={password} /> <br />
+        <TextField id="password" label='Password' variant='standard'
+          type="password" onChange={handlePasswordChange} value={password} />
       </div>
       <div>
-        <button className='button' type="submit">Login</button>
+        <Button type="submit" variant='contained'>Login</Button>
       </div>
     </form>
   )
