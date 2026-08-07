@@ -2,6 +2,7 @@ import { useState, useContext } from 'react'
 import BlogService from '../services/blogs'
 import AppContext from '../contexts/AppContext'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button, Box } from '@mui/material'
 
 
 function NewBlogForm({ ref }) {
@@ -63,21 +64,17 @@ function NewBlogForm({ ref }) {
       <h2>Create new Blog</h2>
 
       <form onSubmit={addNewBlog}>
-        <label>
-          Title:
-          <input type="text" onChange={handleTitleChange} value={title}/>
-        </label> 
-        
-        <br />
-        
-        <label>
-          Url:
-          <input type="text" onChange={handleUrlChange} value={url}/> 
-        </label>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          paddingRight: `${(100 - 100 / 3)}%`,
+          gap: 1
+        }}>
+          <TextField label='Title' type="text" onChange={handleTitleChange} value={title}/>
+          <TextField label='Url' type="text" onChange={handleUrlChange} value={url}/> 
 
-        <br />
-
-        <button className='button' type="submit">Create</button>
+          <Button sx={{margin:1}} variant='contained' type="submit">Create</Button>
+        </Box>
       </form>
     </div>
   )
