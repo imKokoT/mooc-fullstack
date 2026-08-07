@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import AppContext from "../contexts/AppContext"
 import { Link } from "react-router-dom"
+import { List, ListItemButton, ListItemText} from "@mui/material"
 
 
 function Home() {
@@ -11,13 +12,21 @@ function Home() {
   return (
     <div>
       <h2>Blogs List</h2>
-      <ul>
+      <List sx={{
+        listStyleType: 'disc',
+        pl: 2
+      }}>
         {displayedBlogs.map(blog =>
-          <li key={blog.id}><Link to={`/blogs/${blog.id}`}>
-            {`${blog.title} By ${blog.owner.username}`}
-          </Link></li>
+          <ListItemButton sx={{
+              display: 'list-item',
+              py: 0.5, px: 0.4
+            }}
+            key={blog.id} component={Link} to={`/blogs/${blog.id}`
+          }>
+            <ListItemText primary={blog.title} secondary={`By ${blog.owner.username}`}/>
+          </ListItemButton>
         )}
-      </ul>
+      </List>
     </div>
   )
 }
