@@ -15,6 +15,7 @@ import Notification from './components/Notification'
 import './App.css'
 import Home from './components/Home'
 import TopBar from './components/Topbar'
+import { Container } from '@mui/material'
 
 
 function App() {
@@ -77,24 +78,26 @@ function App() {
       notification, setNotification
     }}>
     <LoginContext.Provider value={{user, setUser}}>
-      
-      <TopBar />
+      <Container>
+        
+        <TopBar />
 
-      <Notification />
+        <Notification />
 
-      <Routes>
-        <Route path="/blogs/:id" element={
-          <Blog blog={blog} />
-        } />
-        <Route path="/create" element={
-          <NewBlogForm />
-        } />
-        <Route path="/login" element={
-          <Login />
-        } />
-        <Route path="/" element={<Home />} />
-      </Routes>
-    
+        <Routes>
+          <Route path="/blogs/:id" element={
+            <Blog blog={blog} />
+          } />
+          <Route path="/create" element={
+            <NewBlogForm />
+          } />
+          <Route path="/login" element={
+            <Login />
+          } />
+          <Route path="/" element={<Home />} />
+        </Routes>
+
+      </Container>
     </LoginContext.Provider>
     </AppContext.Provider>
     </div>
