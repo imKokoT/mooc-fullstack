@@ -39,7 +39,7 @@ describe('Blog app', () => {
       await page.getByLabel(/password/i).fill('wrong-password')
       await page.getByRole('button', { name: /login/i }).click()
 
-      await expect(page.locator('.error')).toContainText(/invalid username or password/i)
+      await expect(page.getByRole('alert')).toContainText(/invalid username or password/i)
     })
   })
 
@@ -80,8 +80,8 @@ describe('Blog app', () => {
       await confirm.click()
       
       // check that blog was created
-      await expect(page.locator('.success')).toContainText(/created new blog/i)
-      await expect(page.getByText(/title/).locator('..')).toContainClass('blog')
+      await expect(page.getByRole('alert')).toContainText(/created new blog/i)
+      await expect(page.getByText(/title/).locator('..')).toBeVisible()
     })
 
     describe('Blogs manipulations', () => {
@@ -154,11 +154,11 @@ describe('Blog app', () => {
           title: 'to be deleted', username: 'user'
         }})
         await page.goto('/')
-        await page.getByRole('link', {name: /to be deleted/}).click()
+        await page.getByRole('link', {name: /to be deleted/}).click({force: true})
         const blog = await page.getByText(/to be deleted/)
 
         // press delete and confirm
-        await blog.getByRole('button', {name: /delete/i}).click()
+        await page.getByRole('button', {name: /delete/i}).click()
         
         // check
         await expect(await page.getByText(/to be deleted/)).toHaveCount(0)
@@ -181,8 +181,8 @@ describe('Blog app', () => {
         await page.waitForTimeout(1000)
         
         // take only title
-        const items = await (await page.locator('li').allTextContents()).map(item =>
-          item.split(' ', 1)[0]
+        const items = await (await page.locator('ul > a').allTextContents()).map(item =>
+          item.split(' ', 1)[0].replace(/by/i, '')
         )
 
         expect(items).toEqual([

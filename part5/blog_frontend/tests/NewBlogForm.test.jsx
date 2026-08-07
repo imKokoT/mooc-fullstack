@@ -18,8 +18,8 @@ describe('NewBlogForm', () => {
 
   test('should call BlogsService.createBlog when the form is submitted successfully', async () => {
     // fill field
-    const titleInput = screen.getByLabelText(/Title:/i)
-    const urlInput = screen.getByLabelText(/Url:/i)
+    const titleInput = screen.getByLabelText(/Title/i)
+    const urlInput = screen.getByLabelText(/Url/i)
 
     fireEvent.change(titleInput, { target: { value: 'Test Blog Title' } })
     fireEvent.change(urlInput, { target: { value: 'testurl' } })

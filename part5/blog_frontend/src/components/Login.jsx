@@ -4,7 +4,7 @@ import BlogService from '../services/blogs'
 import LoginService from '../services/login'
 import AppContext from '../contexts/AppContext'
 import { useNavigate } from 'react-router-dom'
-import { TextField, Button, Box } from '@mui/material'
+import { TextField, Button, Box, Typography } from '@mui/material'
 
 
 function Login() {
@@ -67,7 +67,7 @@ function Login() {
         paddingRight: `${(100 - 100 / 3)}%`,
         gap: 1
       }}>
-        <h2>Login</h2>
+        <Typography variant="h4" sx={{marginTop: 3}}>Login</Typography>
 
         <TextField id="username" label='Username' variant='standard'
           onChange={handleUsernameChange} value={username}/> 

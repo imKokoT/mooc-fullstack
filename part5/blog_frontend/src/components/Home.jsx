@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import AppContext from "../contexts/AppContext"
 import { Link } from "react-router-dom"
-import { List, ListItemButton, ListItemText} from "@mui/material"
+import { List, ListItemButton, ListItemText, Typography} from "@mui/material"
 
 
 function Home() {
@@ -11,7 +11,8 @@ function Home() {
 
   return (
     <div>
-      <h2>Blogs List</h2>
+      <Typography variant="h4" sx={{marginTop: 3}}>Blogs List</Typography>
+
       <List sx={{
         listStyleType: 'disc',
         pl: 2

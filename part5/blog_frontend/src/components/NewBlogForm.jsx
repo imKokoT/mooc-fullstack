@@ -2,7 +2,7 @@ import { useState, useContext } from 'react'
 import BlogService from '../services/blogs'
 import AppContext from '../contexts/AppContext'
 import { useNavigate } from 'react-router-dom'
-import { TextField, Button, Box } from '@mui/material'
+import { TextField, Button, Box, Typography } from '@mui/material'
 
 
 function NewBlogForm({ ref }) {
@@ -61,7 +61,7 @@ function NewBlogForm({ ref }) {
 
   return (
     <div>
-      <h2>Create new Blog</h2>
+      <Typography variant="h4" sx={{marginTop: 3, marginBottom:3}}>Create new Blog</Typography>
 
       <form onSubmit={addNewBlog}>
         <Box sx={{
