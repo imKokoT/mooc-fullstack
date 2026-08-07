@@ -6,9 +6,13 @@ import {
 } from 'react-router-dom'
 import LoginContext from '../contexts/LoginContext'
 import './Topbar.css'
+import { Toolbar, Button, AppBar, Typography, Box } from '@mui/material'
 
 
 function TopBar() {
+  const style = {
+    color: '#fff'
+  }
   const {user, setUser} = useContext(LoginContext)
 
   function handleLogout() {
@@ -18,27 +22,35 @@ function TopBar() {
   } 
 
   return (
-    <div className='topbar'>
-      <Link to="/">blogs</Link>
-      {
-        user ?
-        // if logged in 
-          <>  
-            <Link to="/create">new blog</Link>
-            <div>
-              User {user.username}
-            </div>
-            <div>
-              <button onClick={handleLogout}>Logout</button>
-            </div>
-          </>
-          : // if not
-          <div>
-            <Link to="/login">login</Link>
-            {/* TODO: /signup */}
-          </div>
-      }
-    </div>
+    <AppBar position='static'>
+      <Toolbar>
+        {/* title */}
+        <Typography variant='h5'>Blogs App</Typography>
+
+        <Box sx={{ flexGrow: 1 }} />
+
+        {/* buttons */}
+        <Button component={Link} to="/" style={style}>blogs</Button>
+        {
+          user ?
+          // if logged in 
+            <>  
+              <Button component={Link} to="/create" style={style}>new blog</Button>
+              
+              <Button onClick={handleLogout} style={style}>Logout</Button>
+              
+              <Typography>
+                USER {user.username}
+              </Typography>
+            </>
+            : // if not
+            <>
+              <Button component={Link} to="/login" style={style}>login</Button>
+              {/* TODO: /signup */}
+            </>
+        }
+      </Toolbar>
+    </AppBar>
   )
 }
 
