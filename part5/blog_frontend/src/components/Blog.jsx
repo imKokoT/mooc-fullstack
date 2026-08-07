@@ -5,6 +5,8 @@ import UserService from '../services/users'
 import './Blog.css'
 import LoginContext from '../contexts/LoginContext'
 import { useNavigate } from 'react-router-dom'
+import { Card, Typography, Link as MLink, Button, Box } from '@mui/material'
+
 
 function Blog({ blog }) {
   const { setNotification, setBlogs, blogs } = useContext(AppContext)
@@ -71,31 +73,45 @@ function Blog({ blog }) {
   }
 
   return (
-    <div className="blog">
-      <div>
-        {blog.title} 
-        <br />
+    <Card sx={{ 
+      padding: 1,
+      marginTop: 1,
 
-        {blog.url} <br /> 
+      display: 'flex',
+      gap: 1,
+      flexDirection: 'column'
+    }}>
+      <Typography variant='h4'>{blog.title}</Typography>
 
-        likes: {blog.likes}
+      <Typography>
+        By {blog.owner.username}
+      </Typography>
+      
+      <MLink href={blog.url}  underline="always" color="primary">{blog.url}</MLink>
+
+      <Typography>
+        Likes: {blog.likes}
+      </Typography>
+      
+      <Box sx={{
+        display: 'inline-flex',
+        gap: 1
+      }}>
+        {/* show like button if logged in */}
         {user ?
-          <button className='button' onClick={likeBlog}>like</button>
+          <Button variant='outlined' onClick={likeBlog}>like</Button>
           : null
         }
-        <br />
-        
-        By {blog.owner.username} <br />
         
         {/* show button only if user is owner or admin */}
         {user ? 
           (blog.owner.username === user.username || UserService.isAdmin(user.username)) && (
-            <button className='button' onClick={deleteBlog}>Delete</button>
+            <Button sx={{color: '#ff4444', borderColor: '#ff4444'}} variant='outlined' onClick={deleteBlog}>Delete</Button>
           ) 
           : null
         }
-      </div>
-    </div>  
+      </Box>
+    </Card>  
   )
 }
 
