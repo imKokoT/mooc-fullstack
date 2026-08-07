@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import './Notification.css'
 import AppContext from '../contexts/AppContext'
+import { Alert } from '@mui/material'
 
 
 const Notification = () => {
@@ -17,11 +18,11 @@ const Notification = () => {
   )
 
   return (
-    // ok it's clean but non-intuitive\
-    // <div className='notification' className={msgType}></div>
-    <div className={`notification ${msgType}`}>
+    <Alert severity={msgType} sx={{
+      padding:1, margin: 1
+    }}>
       {message}
-    </div>
+    </Alert>
   )
 }
 
