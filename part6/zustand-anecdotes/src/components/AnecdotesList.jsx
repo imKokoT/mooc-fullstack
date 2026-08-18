@@ -1,15 +1,19 @@
-import { useAnecdotes } from "../store"
+import { useAnecdoteActions, useAnecdotes } from "../store"
 
 function AnecdotesList() {
   const anecdotes = useAnecdotes()
+  const { voteUp } = useAnecdoteActions()
 
   const vote = id => {
+    voteUp(id)
     console.log('vote', id)
   }
 
+  const display = anecdotes.toSorted((a, b) => b.votes - a.votes)
+
   return (
     <div>
-      {anecdotes.map(anecdote => (
+      {display.map(anecdote => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
             <div>
