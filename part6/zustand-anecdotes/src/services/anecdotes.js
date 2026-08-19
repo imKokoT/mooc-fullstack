@@ -1,8 +1,8 @@
-const baseUrl = '/api/anecdotes'
+const baseUrl = 'http://localhost:3001/anecdotes'
 
 
 async function getAll() {
-    const response = fetch(baseUrl)
+    const response = await fetch(baseUrl)
 
     if (!response.ok) {
         throw new Error('Failed to fetch anecdotes')
@@ -37,7 +37,7 @@ async function deleteOne(id) {
 }
 
 async function update(anecdote) {
-    const response = fetch(`${baseUrl}/${anecdote.id}`, {
+    const response = await fetch(`${baseUrl}/${anecdote.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
