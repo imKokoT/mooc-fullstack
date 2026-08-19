@@ -1,8 +1,10 @@
 import { useAnecdoteActions, useAnecdotes } from "../states/anecdotes"
+import { useNotificationActions } from "../states/notification"
 
 function CreateNew() {
   const anecdotes = useAnecdotes()
   const { addNew } = useAnecdoteActions()
+  const { showInfo } = useNotificationActions()
   
   function onSubmit(event) {
     event.preventDefault()
@@ -20,6 +22,7 @@ function CreateNew() {
 
     addNew(anecdote)
     console.log(`added new anecdote "${event.target.content.value}"`)
+    showInfo('anecdote added successfully!')
 
     // reset
     event.target.content.value = ''
