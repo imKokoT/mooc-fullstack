@@ -1,4 +1,4 @@
-import { useAnecdoteActions, useAnecdotes } from "../store"
+import { useAnecdoteActions, useAnecdotes } from "../states/anecdotes"
 
 function CreateNew() {
   const anecdotes = useAnecdotes()

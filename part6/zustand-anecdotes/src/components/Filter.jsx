@@ -1,4 +1,4 @@
-import { useAnecdoteActions } from '../store'
+import { useAnecdoteActions } from '../states/anecdotes'
 
 function Filter() {
   const { setFilter } = useAnecdoteActions()
