@@ -48,3 +48,5 @@ export const useAnecdotes = () => useAnecdoteStore(useShallow(
     state.anecdotes
 ))
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
+
+export default useAnecdoteStore
