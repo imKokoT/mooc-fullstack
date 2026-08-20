@@ -43,9 +43,13 @@ const useAnecdoteStore = create((set, get) => ({
 
 
 export const useAnecdotes = () => useAnecdoteStore(useShallow(
-  (state) => state.filter ? 
-    state.anecdotes.filter(a => a.content.toLowerCase().includes(state.filter.toLowerCase())) :
-    state.anecdotes
+  (state) => {
+    const filtered = state.filter ? 
+      state.anecdotes.filter(a => a.content.toLowerCase().includes(state.filter.toLowerCase())) :
+      state.anecdotes
+    
+    return filtered.toSorted((a, b) => b.votes - a.votes)
+  }
 ))
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
 

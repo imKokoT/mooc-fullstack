@@ -34,11 +34,9 @@ function Anecdote({ anecdote }) {
 function AnecdotesList() {
   const anecdotes = useAnecdotes()
 
-  const display = anecdotes.toSorted((a, b) => b.votes - a.votes)
-
   return (
     <div>
-      {display.map(anecdote => <Anecdote key={anecdote.id} anecdote={anecdote} /> ) }
+      {anecdotes.map(anecdote => <Anecdote key={anecdote.id} anecdote={anecdote} /> ) }
     </div>
   )
 }
